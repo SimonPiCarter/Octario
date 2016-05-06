@@ -114,22 +114,19 @@ void SceneOpenGL::bouclePrincipale()
 																	glm::vec3(0.5f,0.f,0.5f));*/
 	DrawableModel model = DrawableFactory::get().createCubeSampleTextureDataModel(1.0f);
 	Shader shader("Shaders/texture.vert","Shaders/texture.frag");
-	shader.load();
 	Drawable cube(&model,&shader);
+	shader.load();
 	cube.load();
 
 	Node mainNode;
 	mainNode.addDrawable("cube",&cube);
 
-	Drawable cube2(&model,&shader);
-	cube2.load();
 	Node subNode;
-	subNode.addDrawable("cube",&cube2);
+	subNode.addDrawable("cube",&cube);
 	subNode.translate(2,2,0);
 	mainNode.addSubNode("subNode",&subNode);
 
     // Matrices
-
     mat4 projection;
     mat4 modelview;
 
