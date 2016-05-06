@@ -36,6 +36,7 @@ class Drawable
 		int sizeOfVerticesBytes;
 		int sizeOfColorsBytes;
 		int sizeOfIboBytes;
+		int sizeOfTextureBytes;
 		GLuint vboId;
 		GLuint iboId;
 

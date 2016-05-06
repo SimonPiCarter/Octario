@@ -10,7 +10,7 @@ DrawableModel DrawableFactory::createCubeDataModel(float size, float r, float g,
 DrawableModel DrawableFactory::createCubeDataModel(float size, glm::vec3 color1, glm::vec3 color2, glm::vec3 color3, glm::vec3 color4,
 	glm::vec3 color5, glm::vec3 color6) {
 	DrawableModel model;
-
+	model.textures = NULL;
 	// Vertices
 	model.vertices = new float[108]{-size, -size, -size,   size, -size, -size,   size, size, -size,     	   // Face 1
 						   -size, -size, -size,   -size, size, -size,   size, size, -size,     // Face 1
@@ -54,6 +54,32 @@ DrawableModel DrawableFactory::createCubeDataModel(float size, glm::vec3 color1,
 	model.ibo = new unsigned int[36]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
 	20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35};
 	model.sizeIbo = 36;
+
+	return model;
+}
+
+DrawableModel DrawableFactory::createCubeSampleTextureDataModel(float size) {
+	DrawableModel model = createCubeDataModel(size,0,0,0);
+	model.textures = new float[72]{0, 0,   1, 0,   1, 1,     // Face 1
+                               0, 0,   0, 1,   1, 1,     // Face 1
+
+                               0, 0,   1, 0,   1, 1,     // Face 2
+                               0, 0,   0, 1,   1, 1,     // Face 2
+
+                               0, 0,   1, 0,   1, 1,     // Face 3
+                               0, 0,   0, 1,   1, 1,     // Face 3
+
+                               0, 0,   1, 0,   1, 1,     // Face 4
+                               0, 0,   0, 1,   1, 1,     // Face 4
+
+                               0, 0,   1, 0,   1, 1,     // Face 5
+                               0, 0,   0, 1,   1, 1,     // Face 5
+
+                               0, 0,   1, 0,   1, 1,     // Face 6
+                               0, 0,   0, 1,   1, 1};    // Face 6
+	model.sizeTexture = 72;
+	model.texture = Texture("Textures/Caisse.jpg");
+	model.texture.load();
 
 	return model;
 }

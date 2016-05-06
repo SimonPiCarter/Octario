@@ -18,6 +18,8 @@ class DrawableFactory : public Singleton<DrawableFactory>
 											glm::vec3 color5,
 											glm::vec3 color6);
 
+		DrawableModel createCubeSampleTextureDataModel(float size);
+
 	protected:
 		DrawableFactory() {}
 		virtual ~DrawableFactory() {}
