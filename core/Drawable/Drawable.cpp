@@ -2,30 +2,25 @@
 
 using namespace glm;
 
-Drawable::Drawable(float* inVertices, int nbVertices, float* inColors, int nbColors, unsigned int* inIbo, int nbIbo) :
-	vertices(inVertices),
-	colors(inColors),
-	ibo(inIbo),
+Drawable::Drawable(DrawableModel inModel) :
+	model(inModel),
 	shader(),
 	vboId(0),
 	iboId(0),
-	sizeOfVerticesBytes(nbVertices*sizeof(float)),
-	sizeOfColorsBytes(nbColors*sizeof(float)),
-	sizeOfIboBytes(nbIbo*sizeof(unsigned int)) {
+	sizeOfVerticesBytes(inModel.sizeVertices*sizeof(float)),
+	sizeOfColorsBytes(inModel.sizeColors*sizeof(float)),
+	sizeOfIboBytes(inModel.sizeIbo*sizeof(unsigned int)) {
 
 }
 
-Drawable::Drawable(float* inVertices, int nbVertices, float* inColors, int nbColors, unsigned int* inIbo, int nbIbo,
-				std::string const vertexShader, std::string const fragmentShader) :
-	vertices(inVertices),
-	colors(inColors),
-	ibo(inIbo),
+Drawable::Drawable(DrawableModel inModel, std::string const vertexShader, std::string const fragmentShader) :
+	model(inModel),
 	shader(vertexShader,fragmentShader),
 	vboId(0),
 	iboId(0),
-	sizeOfVerticesBytes(nbVertices*sizeof(float)),
-	sizeOfColorsBytes(nbColors*sizeof(float)),
-	sizeOfIboBytes(nbIbo*sizeof(unsigned int)) {
+	sizeOfVerticesBytes(inModel.sizeVertices*sizeof(float)),
+	sizeOfColorsBytes(inModel.sizeColors*sizeof(float)),
+	sizeOfIboBytes(inModel.sizeIbo*sizeof(unsigned int)) {
 
 }
 
@@ -42,15 +37,15 @@ bool Drawable::load() {
     glBindBuffer(GL_ARRAY_BUFFER, vboId);
 
 		glBufferData(GL_ARRAY_BUFFER, sizeOfVerticesBytes + sizeOfColorsBytes, 0, GL_STATIC_DRAW);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeOfVerticesBytes, vertices);
-		glBufferSubData(GL_ARRAY_BUFFER, sizeOfVerticesBytes, sizeOfColorsBytes, colors);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeOfVerticesBytes, model.vertices);
+		glBufferSubData(GL_ARRAY_BUFFER, sizeOfVerticesBytes, sizeOfColorsBytes, model.colors);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, &iboId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
 
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfIboBytes, ibo, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfIboBytes, model.ibo, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

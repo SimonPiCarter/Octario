@@ -7,6 +7,7 @@
 
 #include <string>
 #include "../Shader/Shader.h"
+#include "DrawableModel.h"
 
 #ifndef BUFFER_OFFSET
 
@@ -18,9 +19,8 @@ class Drawable
 {
 	public:
 		/** Default constructor */
-		Drawable(float* inVertices, int nbVertices, float* inColors, int nbColors, unsigned int* inIbo, int nbIbo);
-		Drawable(float* inVertices, int nbVertices, float* inColors, int nbColors, unsigned int* inIbo, int nbIbo,
-				std::string const vertexShader, std::string const fragmentShader);
+		Drawable(DrawableModel inModel);
+		Drawable(DrawableModel inModel, std::string const vertexShader, std::string const fragmentShader);
 		/** Default destructor */
 		virtual ~Drawable();
 
@@ -29,9 +29,7 @@ class Drawable
 		virtual bool draw(glm::mat4 modelview, glm::mat4 projection);
 
 	protected:
-		float *vertices;
-		float *colors;
-		unsigned int *ibo;
+		DrawableModel model;
 
 		Shader shader;
 
