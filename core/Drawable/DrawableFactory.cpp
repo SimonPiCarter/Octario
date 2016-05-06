@@ -78,8 +78,8 @@ DrawableModel DrawableFactory::createCubeSampleTextureDataModel(float size) {
                                0, 0,   1, 0,   1, 1,     // Face 6
                                0, 0,   0, 1,   1, 1};    // Face 6
 	model.sizeTexture = 72;
-	model.texture = Texture("Textures/Caisse.jpg");
-	model.texture.load();
+	model.texture = new Texture("Textures/Caisse.jpg");
+	model.texture->load();
 
 	return model;
 }

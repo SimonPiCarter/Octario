@@ -12,5 +12,5 @@ struct DrawableModel {
 	unsigned int* ibo;
 	int sizeIbo;
 
-	Texture texture;
+	Texture* texture;
 };

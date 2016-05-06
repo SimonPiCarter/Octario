@@ -69,7 +69,7 @@ bool Drawable::draw(mat4 modelview, mat4 projection) {
 	if ( model.textures != NULL ) {
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes));
 		glEnableVertexAttribArray(2);
-		glBindTexture(GL_TEXTURE_2D, model.texture.getId());
+		glBindTexture(GL_TEXTURE_2D, model.texture->getId());
 	} else {
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes));
 		glEnableVertexAttribArray(1);
