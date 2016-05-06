@@ -115,8 +115,15 @@ void SceneOpenGL::bouclePrincipale()
 	shader.load();
 	cube.load();
 
+	DrawableModel modelPlane = DrawableFactory::get().createPlaneModel(7.f,4.f,0.1f,0.5f,0.5f,0.5f);
+	Shader shaderPlane("Shaders/couleur3D.vert","Shaders/couleur3D.frag");
+	Drawable plane(&modelPlane,&shaderPlane);
+	shaderPlane.load();
+	plane.load();
+
 	Node mainNode;
 	mainNode.addDrawable("cube",&cube);
+	mainNode.addDrawable("plane",&plane);
 
 	Node subNode;
 	subNode.addDrawable("cube",&cube);
