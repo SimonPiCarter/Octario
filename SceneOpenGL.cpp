@@ -95,6 +95,7 @@ bool SceneOpenGL::initGL()
 
 
     glEnable(GL_DEPTH_TEST);
+    glCullFace(GL_BACK);
 
     return true;
 }
@@ -160,7 +161,7 @@ void SceneOpenGL::bouclePrincipale()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Rotation du repere
-		mainNode.rotate(vec3(0, 1, 0),0.5f);
+		mainNode.rotate(vec3(0, 1, 0),0.05f);
 
         mainNode.draw(modelview, projection);
 

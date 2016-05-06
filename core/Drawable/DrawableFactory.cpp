@@ -14,22 +14,22 @@ DrawableModel DrawableFactory::createCubeModel(float size, glm::vec3 color1, glm
 	model.textures = NULL;
 	// Vertices
 	model.vertices = new float[108]{-size, -size, -size,   size, -size, -size,   size, size, -size,     	   // Face 1
-						   -size, -size, -size,   -size, size, -size,   size, size, -size,     // Face 1
+						   -size, -size, -size,   size, size, -size,   -size, size, -size,     	// Face 1
 
-						   size, -size, size,   size, -size, -size,   size, size, -size,       // Face 2
+						   size, -size, size,   size, size, -size,   size, -size, -size,       // Face 2
 						   size, -size, size,   size, size, size,   size, size, -size,         // Face 2
 
 						   -size, -size, size,   size, -size, size,   size, -size, -size,      // Face 3
-						   -size, -size, size,   -size, -size, -size,   size, -size, -size,    // Face 3
+						   -size, -size, size,   size, -size, -size,   -size, -size, -size,    // Face 3
 
-						   -size, -size, size,   size, -size, size,   size, size, size,        // Face 4
+						   -size, -size, size,   size, size, size,   size, -size, size,        // Face 4
 						   -size, -size, size,   -size, size, size,   size, size, size,        // Face 4
 
-						   -size, -size, -size,   -size, -size, size,   -size, size, size,     // Face 5
+						   -size, -size, -size,   -size, size, size,   -size, -size, size,     // Face 5
 						   -size, -size, -size,   -size, size, -size,   -size, size, size,     // Face 5
 
 						   -size, size, size,   size, size, size,   size, size, -size,         // Face 6
-						   -size, size, size,   -size, size, -size,   size, size, -size};      // Face 6
+						   -size, size, size,   size, size, -size,   -size, size, -size};      // Face 6
 	model.sizeVertices = 108;
 	// Colors
 	model.colors = new float[108]{
@@ -60,27 +60,45 @@ DrawableModel DrawableFactory::createCubeModel(float size, glm::vec3 color1, glm
 }
 
 DrawableModel DrawableFactory::createCubeSampleTextureModel(float size) {
-	DrawableModel model = createCubeModel(size,0,0,0);
-	model.textures = new float[72]{0, 0,   1, 0,   1, 1,     // Face 1
-                               0, 0,   0, 1,   1, 1,     // Face 1
+	size /= 2.f;
+	DrawableModel model;
+	model.textures = NULL;
+	// Vertices
+	model.vertices = new float[24]{-size, -size, -size,		// 0
+									size, -size, -size,		// 1
+									size, size, -size,		// 2
+									-size, size, -size,		// 3
+									-size, -size, size,		// 4
+									size, -size, size,		// 5
+									size, size, size,		// 6
+									-size, size, size};		// 7
+	model.sizeVertices = 24;
 
-                               0, 0,   1, 0,   1, 1,     // Face 2
-                               0, 0,   0, 1,   1, 1,     // Face 2
-
-                               0, 0,   1, 0,   1, 1,     // Face 3
-                               0, 0,   0, 1,   1, 1,     // Face 3
-
-                               0, 0,   1, 0,   1, 1,     // Face 4
-                               0, 0,   0, 1,   1, 1,     // Face 4
-
-                               0, 0,   1, 0,   1, 1,     // Face 5
-                               0, 0,   0, 1,   1, 1,     // Face 5
-
-                               0, 0,   1, 0,   1, 1,     // Face 6
-                               0, 0,   0, 1,   1, 1};    // Face 6
-	model.sizeTexture = 72;
+	model.textures = new float[16]{0,0,
+								   1,0,
+								   1,1,
+								   0,1,
+								   0,0,
+								   1,0,
+								   1,1,
+								   0,1};
+	model.sizeTexture = 16;
 	model.texture = new Texture("Textures/Caisse.jpg");
 	model.texture->load();
+
+	model.ibo = new unsigned int[36]{0, 1, 2,    	// Face 1
+									0, 2, 3,     	// Face 1
+									5, 2, 1,		// Face 2
+									5, 6, 2,		// Face 2
+									4, 5, 1,		// Face 3
+									4, 1, 0,		// Face 3
+									4, 6, 5,		// Face 4
+									4, 7, 6,		// Face 4
+									0, 7, 4,		// Face 5
+									0, 3, 7,		// Face 5
+									7, 6, 2,		// Face 6
+									7, 2, 3};		// Face 6
+	model.sizeIbo = 36;
 
 	return model;
 }
