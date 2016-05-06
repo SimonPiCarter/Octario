@@ -43,7 +43,6 @@ bool SceneOpenGL::initialiserFenetre()
 
 
     // Création de la fenêtre
-
     m_fenetre = SDL_CreateWindow(m_titreFenetre.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_largeurFenetre, m_hauteurFenetre, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
     if(m_fenetre == 0)
@@ -107,49 +106,13 @@ void SceneOpenGL::bouclePrincipale()
     // Division du paramètre taille
 	taille /= 2.f;
 
-
-	// Vertices
-	float vertices[] = {-taille, -taille, -taille,   taille, -taille, -taille,   taille, taille, -taille,     // Face 1
-						   -taille, -taille, -taille,   -taille, taille, -taille,   taille, taille, -taille,     // Face 1
-
-						   taille, -taille, taille,   taille, -taille, -taille,   taille, taille, -taille,       // Face 2
-						   taille, -taille, taille,   taille, taille, taille,   taille, taille, -taille,         // Face 2
-
-						   -taille, -taille, taille,   taille, -taille, taille,   taille, -taille, -taille,      // Face 3
-						   -taille, -taille, taille,   -taille, -taille, -taille,   taille, -taille, -taille,    // Face 3
-
-						   -taille, -taille, taille,   taille, -taille, taille,   taille, taille, taille,        // Face 4
-						   -taille, -taille, taille,   -taille, taille, taille,   taille, taille, taille,        // Face 4
-
-						   -taille, -taille, -taille,   -taille, -taille, taille,   -taille, taille, taille,     // Face 5
-						   -taille, -taille, -taille,   -taille, taille, -taille,   -taille, taille, taille,     // Face 5
-
-						   -taille, taille, taille,   taille, taille, taille,   taille, taille, -taille,         // Face 6
-						   -taille, taille, taille,   -taille, taille, -taille,   taille, taille, -taille};      // Face 6
-
-		// Couleurs
-		float colors[] = {1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,           // Face 1
-                    1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,           // Face 1
-
-                    0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,           // Face 2
-                    0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,           // Face 2
-
-                    0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,           // Face 3
-                    0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,           // Face 3
-
-                    1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,           // Face 4
-                    1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,           // Face 4
-
-                    0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,           // Face 5
-                    0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,           // Face 5
-
-                    0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,           // Face 6
-                    0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0};          // Face 6
-
-	unsigned int indexes[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
-	20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35};
-
-	Drawable cube(vertices,108,colors,108,indexes,36,"Shaders/couleur3D.vert","Shaders/couleur3D.frag");
+	DrawableModel model = DrawableFactory::get().createCubeDataModel(1.0f,glm::vec3(0.f,0.f,1.f),
+																	glm::vec3(1.f,0.f,0.f),
+																	glm::vec3(0.f,1.f,0.f),
+																	glm::vec3(0.5f,0.5f,0.f),
+																	glm::vec3(0.f,0.5f,0.5f),
+																	glm::vec3(0.5f,0.f,0.5f));
+	Drawable cube(model,"Shaders/couleur3D.vert","Shaders/couleur3D.frag");
 	cube.load();
 
     // Shader
@@ -196,45 +159,9 @@ void SceneOpenGL::bouclePrincipale()
 		// Rotation du repère
 		modelview = rotate(modelview, angle, vec3(0, 1, 0));
 
-        // On spécifie quel shader utiliser
-        /*glUseProgram(shaderCouleur.getProgramID());
-
-
-            // On remplie puis on active le tableau Vertex Attrib 0
-
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vertices);
-            glEnableVertexAttribArray(0);
-
-            // Même chose avec le tableau Vertex Attrib 1
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors);
-            glEnableVertexAttribArray(1);
-
-
-            // On envoie les matrices au shader
-            glUniformMatrix4fv(glGetUniformLocation(shaderCouleur.getProgramID(), "modelview"), 1, GL_FALSE, value_ptr(modelview));
-            glUniformMatrix4fv(glGetUniformLocation(shaderCouleur.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
-
-
-            // On affiche le polygone
-
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
-            // On désactive les tableaux Vertex Attrib puisque l'on n'en a plus besoin
-
-            glDisableVertexAttribArray(1);
-            glDisableVertexAttribArray(0);
-
-
-        // On n'utilise plus le shader
-
-        glUseProgram(0);*/
-
         cube.draw(modelview, projection);
 
-
         // Actualisation de la fenêtre
-
         SDL_GL_SwapWindow(m_fenetre);
     }
 }
