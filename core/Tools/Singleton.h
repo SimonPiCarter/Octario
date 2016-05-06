@@ -4,7 +4,7 @@ template <class T>
 class Singleton
 {
     public:
-        static T& Get();
+        static T& get();
     protected:
 
 		static T _Data;
@@ -34,7 +34,7 @@ class Singleton
 
 template <class T> T Singleton<T>::_Data = T();
 
-template <class T> T& Singleton<T>::Get()
+template <class T> T& Singleton<T>::get()
 {
     return _Data;
 }
