@@ -1,6 +1,8 @@
 #include "SceneOpenGL.h"
 #include "core/core.h"
 
+#include <sstream>
+
 // Permet d'éviter la ré-écriture du namespace glm::
 using namespace glm;
 
@@ -133,12 +135,26 @@ void SceneOpenGL::bouclePrincipale()
     projection = perspective(70.0, (double) m_largeurFenetre / m_hauteurFenetre, 1.0, 100.0);
     modelview = lookAt(vec3(3, 3, 3), vec3(0, 0, 0), vec3(0, 1, 0));
 
-	float angle = 0;
+	Uint32 start_time = SDL_GetTicks();
+	Uint32 elapsed_time = 0;
+	Uint32 frame_count = 0;
 
     // Boucle principale
     while(!terminer)
     {
+		elapsed_time = SDL_GetTicks()-start_time;
+		++frame_count;
 
+		if ( elapsed_time > 1000 ) {
+			double frame_rate = (double)frame_count/(double)elapsed_time*1000;
+			std::ostringstream strs;
+			strs <<"OpenGL FPS: "<<frame_rate;
+			std::string str = strs.str();
+			SDL_SetWindowTitle(m_fenetre,str.c_str());
+			elapsed_time = 0;
+			start_time = SDL_GetTicks();
+			frame_count = 0;
+		}
         // Gestion des evenements
         SDL_PollEvent(&m_evenements);
 

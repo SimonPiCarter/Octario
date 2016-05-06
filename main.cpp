@@ -2,7 +2,7 @@
 int main(int argc, char **argv)
 {
     // Création de la sène
-    SceneOpenGL scene("Chapitre 3", 800, 600);
+    SceneOpenGL scene("OpenGL FPS: 0", 800, 600);
     // Initialisation de la scène
 
 	if(scene.initialiserFenetre() == false)
