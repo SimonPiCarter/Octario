@@ -13,4 +13,6 @@ struct DrawableModel {
 	int sizeIbo;
 
 	Texture* texture;
+
+	DrawableModel() : vertices(NULL), colors(NULL), textures(NULL), texture(NULL) {}
 };

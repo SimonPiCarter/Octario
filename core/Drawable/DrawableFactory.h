@@ -20,7 +20,7 @@ class DrawableFactory : public Singleton<DrawableFactory>
 
 		DrawableModel createCubeSampleTextureModel(float size);
 
-		DrawableModel createPlaneModel(float width, float height, float r, float g, float b);
+		DrawableModel createPlaneModel(float width, float height, float thickness, float r, float g, float b);
 
 	protected:
 		DrawableFactory() {}
