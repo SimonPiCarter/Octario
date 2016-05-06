@@ -106,18 +106,15 @@ void SceneOpenGL::bouclePrincipale()
     // Division du paramètre taille
 	taille /= 2.f;
 
-	DrawableModel model = DrawableFactory::get().createCubeDataModel(1.0f,glm::vec3(0.f,0.f,1.f),
+	/*DrawableModel model = DrawableFactory::get().createCubeDataModel(1.0f,glm::vec3(0.f,0.f,1.f),
 																	glm::vec3(1.f,0.f,0.f),
 																	glm::vec3(0.f,1.f,0.f),
 																	glm::vec3(0.5f,0.5f,0.f),
 																	glm::vec3(0.f,0.5f,0.5f),
-																	glm::vec3(0.5f,0.f,0.5f));
-	Drawable cube(model,"Shaders/couleur3D.vert","Shaders/couleur3D.frag");
+																	glm::vec3(0.5f,0.f,0.5f));*/
+	DrawableModel model = DrawableFactory::get().createCubeSampleTextureDataModel(1.0f);
+	Drawable cube(model,"Shaders/texture.vert","Shaders/texture.frag");
 	cube.load();
-
-    // Shader
-    Shader shaderCouleur("Shaders/couleur3D.vert", "Shaders/couleur3D.frag");
-    shaderCouleur.load();
 
 
     // Matrices
