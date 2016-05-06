@@ -116,7 +116,15 @@ void SceneOpenGL::bouclePrincipale()
 	Drawable cube(model,"Shaders/texture.vert","Shaders/texture.frag");
 	cube.load();
 
-	Movable movableCube;
+	Node mainNode;
+	mainNode.addDrawable("cube",&cube);
+
+	Drawable cube2(model,"Shaders/texture.vert","Shaders/texture.frag");
+	cube2.load();
+	Node subNode;
+	subNode.addDrawable("cube",&cube2);
+	subNode.translate(2,2,0);
+	mainNode.addSubNode("subNode",&subNode);
 
     // Matrices
 
@@ -132,20 +140,20 @@ void SceneOpenGL::bouclePrincipale()
     while(!terminer)
     {
 
-        // Gestion des évènements
+        // Gestion des evenements
         SDL_PollEvent(&m_evenements);
 
         if(m_evenements.window.event == SDL_WINDOWEVENT_CLOSE)
             terminer = true;
 
 
-        // Nettoyage de l'écran
+        // Nettoyage de l'ecran
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Rotation du repère
-		movableCube.rotate(vec3(0, 1, 0),0.5f);
+		// Rotation du repere
+		mainNode.rotate(vec3(0, 1, 0),0.5f);
 
-        cube.draw(modelview*movableCube.getMatrix(), projection);
+        mainNode.draw(modelview, projection);
 
         // Actualisation de la fenêtre
         SDL_GL_SwapWindow(m_fenetre);
