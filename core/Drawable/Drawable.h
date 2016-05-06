@@ -19,8 +19,8 @@ class Drawable
 {
 	public:
 		/** Default constructor */
-		Drawable(DrawableModel inModel);
-		Drawable(DrawableModel inModel, std::string const vertexShader, std::string const fragmentShader);
+		Drawable(DrawableModel* inModel);
+		Drawable(DrawableModel* inModel, Shader* inShader);
 		/** Default destructor */
 		virtual ~Drawable();
 
@@ -29,9 +29,9 @@ class Drawable
 		virtual bool draw(glm::mat4 modelview, glm::mat4 projection);
 
 	protected:
-		DrawableModel model;
+		DrawableModel* model;
 
-		Shader shader;
+		Shader* shader;
 
 		int sizeOfVerticesBytes;
 		int sizeOfColorsBytes;

@@ -113,13 +113,15 @@ void SceneOpenGL::bouclePrincipale()
 																	glm::vec3(0.f,0.5f,0.5f),
 																	glm::vec3(0.5f,0.f,0.5f));*/
 	DrawableModel model = DrawableFactory::get().createCubeSampleTextureDataModel(1.0f);
-	Drawable cube(model,"Shaders/texture.vert","Shaders/texture.frag");
+	Shader shader("Shaders/texture.vert","Shaders/texture.frag");
+	shader.load();
+	Drawable cube(&model,&shader);
 	cube.load();
 
 	Node mainNode;
 	mainNode.addDrawable("cube",&cube);
 
-	Drawable cube2(model,"Shaders/texture.vert","Shaders/texture.frag");
+	Drawable cube2(&model,&shader);
 	cube2.load();
 	Node subNode;
 	subNode.addDrawable("cube",&cube2);
