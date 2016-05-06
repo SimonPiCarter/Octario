@@ -116,6 +116,7 @@ void SceneOpenGL::bouclePrincipale()
 	Drawable cube(model,"Shaders/texture.vert","Shaders/texture.frag");
 	cube.load();
 
+	Movable movableCube;
 
     // Matrices
 
@@ -123,7 +124,7 @@ void SceneOpenGL::bouclePrincipale()
     mat4 modelview;
 
     projection = perspective(70.0, (double) m_largeurFenetre / m_hauteurFenetre, 1.0, 100.0);
-    modelview = mat4(1.0);
+    modelview = lookAt(vec3(3, 3, 3), vec3(0, 0, 0), vec3(0, 1, 0));
 
 	float angle = 0;
 
@@ -141,22 +142,10 @@ void SceneOpenGL::bouclePrincipale()
         // Nettoyage de l'écran
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-        // Réinitialisation de la matrice modelview
-		modelview = lookAt(vec3(3, 3, 3), vec3(0, 0, 0), vec3(0, 1, 0));
-
-
-		// Incrémentation de l'angle
-		angle += 4.0;
-
-		if(angle >= 360.0)
-			angle -= 360.0;
-
-
 		// Rotation du repère
-		modelview = rotate(modelview, angle, vec3(0, 1, 0));
+		movableCube.rotate(vec3(0, 1, 0),0.5f);
 
-        cube.draw(modelview, projection);
+        cube.draw(modelview*movableCube.getMatrix(), projection);
 
         // Actualisation de la fenêtre
         SDL_GL_SwapWindow(m_fenetre);
