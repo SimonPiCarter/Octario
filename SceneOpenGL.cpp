@@ -134,16 +134,17 @@ void SceneOpenGL::bouclePrincipale()
 
 	// Load light
 	Light light;
-	light.translate(3,3,3);
+	light.translate(5,5,5);
 
-	glUniformMatrix4fv(glGetUniformLocation(shaderPlane.getProgramID(), "lightPos"), 1, GL_FALSE, value_ptr(light.getPosition()));
+	LightManager::get().addPointLight("testLight",&light);
 
     // Matrices
     mat4 projection;
     mat4 modelview;
 
     projection = perspective(70.0, (double) m_largeurFenetre / m_hauteurFenetre, 1.0, 100.0);
-    modelview = lookAt(vec3(3, 3, 3), vec3(0, 0, 0), vec3(0, 1, 0));
+    modelview = lookAt(vec3(5, 5, 5), vec3(0, 0, 0), vec3(0, 1, 0));
+
 
 	Uint32 start_time = SDL_GetTicks();
 	Uint32 elapsed_time = 0;
