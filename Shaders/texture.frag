@@ -14,7 +14,8 @@ in vec3 normal;
 uniform sampler2D texture;
 uniform mat4 model;
 uniform mat4 view;
-uniform vec4 lightPos;
+uniform vec4 pointLightPos[16];
+uniform int pointLightCount;
 
 // Sortie 
 
@@ -31,13 +32,13 @@ void main()
 
 
 	// Distance to the light
-	float distance = length( lightPos.xyz - pos_world );
+	float distance = length( pointLightPos[0].xyz - pos_world );
 
 
 	// Normal of the computed fragment, in camera space
 	vec3 n = normalize( normal );
 	// Direction of the light (from the fragment to the light)
-	vec3 l = normalize( lightPos.xyz - pos_world );
+	vec3 l = normalize( pointLightPos[0].xyz - pos_world );
 	// Cosine of the angle between the normal and the light direction, 
 	// clamped above 0
 	//  - light is at the vertical of the triangle -> 1

@@ -16,7 +16,8 @@ uniform mat4 mvp;
 uniform mat4 projection;
 uniform mat4 model;
 uniform mat4 view;
-uniform vec4 lightPos;
+uniform vec4 pointLightPos[16];
+uniform int pointLightCount;
 
 
 // Sortie
