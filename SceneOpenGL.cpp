@@ -134,10 +134,9 @@ void SceneOpenGL::bouclePrincipale()
 
 	// Load light
 	Light light;
-	light.translate(5,5,0);
-	std::cout<<light.getPosition().x<<";"<<light.getPosition().y<<";"<<light.getPosition().z<<";"<<light.getPosition().w<<std::endl;
+	light.translate(3,3,3);
 
-	glUniformMatrix4fv(glGetUniformLocation(shaderPlane.getProgramID(), "lightPosition"), 1, GL_FALSE, value_ptr(light.getPosition()));
+	glUniformMatrix4fv(glGetUniformLocation(shaderPlane.getProgramID(), "lightPos"), 1, GL_FALSE, value_ptr(light.getPosition()));
 
     // Matrices
     mat4 projection;

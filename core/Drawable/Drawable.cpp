@@ -67,18 +67,18 @@ bool Drawable::draw(glm::mat4 view, glm::mat4 modelMat, glm::mat4 projection) {
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(0);
 
-	if ( sizeOfNormalsBytes > 0 ) {
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes));
-		glEnableVertexAttribArray(3);
-	}
-	if ( model->textures != NULL ) {
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes + sizeOfNormalsBytes));
-		glEnableVertexAttribArray(2);
-		glBindTexture(GL_TEXTURE_2D, model->texture->getId());
-	} else {
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes + sizeOfNormalsBytes));
-		glEnableVertexAttribArray(1);
-	}
+		if ( sizeOfNormalsBytes > 0 ) {
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes));
+			glEnableVertexAttribArray(2);
+		}
+		if ( model->textures != NULL ) {
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes + sizeOfNormalsBytes));
+			glEnableVertexAttribArray(1);
+			glBindTexture(GL_TEXTURE_2D, model->texture->getId());
+		} else {
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes + sizeOfNormalsBytes));
+			glEnableVertexAttribArray(1);
+		}
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
@@ -92,12 +92,12 @@ bool Drawable::draw(glm::mat4 view, glm::mat4 modelMat, glm::mat4 projection) {
 
 
 	if ( model->textures != NULL ) {
-		glDisableVertexAttribArray(2);
+		glDisableVertexAttribArray(1);
 	} else {
 		glDisableVertexAttribArray(1);
 	}
 	if ( sizeOfNormalsBytes > 0 ) {
-		glDisableVertexAttribArray(3);
+		glDisableVertexAttribArray(2);
 	}
 	glDisableVertexAttribArray(0);
 
