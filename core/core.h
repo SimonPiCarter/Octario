@@ -5,3 +5,4 @@
 #include "Drawable/DrawableFactory.h"
 #include "Movable/Movable.h"
 #include "Node/Node.h"
+#include "Light/Light.h"
