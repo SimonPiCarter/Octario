@@ -84,6 +84,17 @@ DrawableModel DrawableFactory::createCubeSampleTextureModel(float size) {
 	model.texture = new Texture("Textures/Caisse.jpg");
 	model.texture->load();
 
+	model.normals = new float[24]{-1,-1,-1,
+								1,-1,-1,
+								1,1,-1,
+								-1,1,-1,
+								-1,-1,1,
+								1,-1,1,
+								1,1,1,
+								-1,1,1};
+	model.sizeNormals = 24;
+
+
 	model.ibo = new unsigned int[36]{0, 1, 2,    	// Face 1
 									0, 2, 3,     	// Face 1
 									5, 2, 1,		// Face 2

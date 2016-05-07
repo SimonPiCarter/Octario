@@ -1,6 +1,7 @@
 #include "SceneOpenGL.h"
 #include "core/core.h"
 
+#include <iostream>
 #include <sstream>
 
 // Permet d'éviter la ré-écriture du namespace glm::
@@ -109,16 +110,17 @@ void SceneOpenGL::bouclePrincipale()
     // Division du paramètre taille
 	taille /= 2.f;
 
-	DrawableModel model = DrawableFactory::get().createCubeSampleTextureModel(2.0f);
 	Shader shader("Shaders/texture.vert","Shaders/texture.frag");
-	Drawable cube(&model,&shader);
 	shader.load();
+	Shader shaderPlane("Shaders/couleur3D.vert","Shaders/couleur3D.frag");
+	shaderPlane.load();
+
+	DrawableModel model = DrawableFactory::get().createCubeSampleTextureModel(2.0f);
+	Drawable cube(&model,&shader);
 	cube.load();
 
 	DrawableModel modelPlane = DrawableFactory::get().createPlaneModel(7.f,4.f,0.1f,0.5f,0.5f,0.5f);
-	Shader shaderPlane("Shaders/couleur3D.vert","Shaders/couleur3D.frag");
 	Drawable plane(&modelPlane,&shaderPlane);
-	shaderPlane.load();
 	plane.load();
 
 	Node mainNode;
@@ -129,6 +131,13 @@ void SceneOpenGL::bouclePrincipale()
 	subNode.addDrawable("cube",&cube);
 	subNode.translate(2,2,0);
 	mainNode.addSubNode("subNode",&subNode);
+
+	// Load light
+	Light light;
+	light.translate(5,5,0);
+	std::cout<<light.getPosition().x<<";"<<light.getPosition().y<<";"<<light.getPosition().z<<";"<<light.getPosition().w<<std::endl;
+
+	glUniformMatrix4fv(glGetUniformLocation(shaderPlane.getProgramID(), "lightPosition"), 1, GL_FALSE, value_ptr(light.getPosition()));
 
     // Matrices
     mat4 projection;
@@ -170,7 +179,7 @@ void SceneOpenGL::bouclePrincipale()
 		// Rotation du repere
 		mainNode.rotate(vec3(0, 1, 0),0.05f);
 
-        mainNode.draw(modelview, projection);
+        mainNode.draw(modelview,glm::mat4(1), projection);
 
         // Actualisation de la fenêtre
         SDL_GL_SwapWindow(m_fenetre);

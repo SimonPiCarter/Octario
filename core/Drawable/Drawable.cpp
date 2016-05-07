@@ -59,7 +59,7 @@ bool Drawable::load() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-bool Drawable::draw(mat4 modelview, mat4 projection) {
+bool Drawable::draw(glm::mat4 view, glm::mat4 modelMat, glm::mat4 projection) {
 
     glUseProgram(shader->getProgramID());
 	glBindBuffer(GL_ARRAY_BUFFER, vboId);
@@ -83,7 +83,9 @@ bool Drawable::draw(mat4 modelview, mat4 projection) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
 
-	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "modelview"), 1, GL_FALSE, value_ptr(modelview));
+	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "mvp"), 1, GL_FALSE, value_ptr(projection*view*modelMat));
+	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "model"), 1, GL_FALSE, value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "view"), 1, GL_FALSE, value_ptr(modelMat));
 	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
 
 	glDrawElements(GL_TRIANGLES, model->sizeIbo, GL_UNSIGNED_INT, (GLvoid*)0);
