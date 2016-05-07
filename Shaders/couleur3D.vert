@@ -24,6 +24,8 @@ uniform vec4 lightPos;
 out vec3 color;
 out vec3 pos_world;
 out vec3 normal;
+out vec3 EyeDirection_cameraspace;
+out vec3 LightDirection_cameraspace;
 
 // Fonction main
 
@@ -36,7 +38,7 @@ void main()
     pos_world = (model * vec4(in_Vertex, 1.0)).xyz;
 	vec3 vertexPosition_cameraspace = ( view * model * vec4(pos_world,1)).xyz;
 
-	normal = in_Normal;
+	normal = (model * vec4(in_Normal, 0.0)).xyz;
 
     // Envoi de la couleur au Fragment Shader
 

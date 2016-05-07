@@ -36,7 +36,7 @@ void main()
     pos_world = (model * vec4(in_Vertex, 1.0)).xyz;
 	vec3 vertexPosition_cameraspace = ( view * model * vec4(pos_world,1)).xyz;
 
-	normal = in_Normal;
+	normal = (model * vec4(in_Normal, 0.0)).xyz;
 
     // Envoi des coordonnées de texture au Fragment Shader
 
