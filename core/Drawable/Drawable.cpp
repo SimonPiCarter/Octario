@@ -10,7 +10,8 @@ Drawable::Drawable(DrawableModel* inModel) :
 	sizeOfVerticesBytes(inModel->sizeVertices*sizeof(float)),
 	sizeOfColorsBytes(inModel->sizeColors*sizeof(float)),
 	sizeOfIboBytes(inModel->sizeIbo*sizeof(unsigned int)),
-	sizeOfTextureBytes(inModel->sizeTexture*sizeof(float)) {
+	sizeOfTextureBytes(inModel->sizeTexture*sizeof(float)),
+	sizeOfNormalsBytes(inModel->sizeNormals*sizeof(float)) {
 
 }
 
@@ -22,7 +23,8 @@ Drawable::Drawable(DrawableModel* inModel, Shader* inShader) :
 	sizeOfVerticesBytes(inModel->sizeVertices*sizeof(float)),
 	sizeOfColorsBytes(inModel->sizeColors*sizeof(float)),
 	sizeOfIboBytes(inModel->sizeIbo*sizeof(unsigned int)),
-	sizeOfTextureBytes(inModel->sizeTexture*sizeof(float)) {
+	sizeOfTextureBytes(inModel->sizeTexture*sizeof(float)),
+	sizeOfNormalsBytes(inModel->sizeNormals*sizeof(float)) {
 
 }
 
@@ -37,13 +39,14 @@ bool Drawable::load() {
     glBindBuffer(GL_ARRAY_BUFFER, vboId);
 
 		if ( model->textures != NULL ) {
-			glBufferData(GL_ARRAY_BUFFER, sizeOfVerticesBytes + sizeOfTextureBytes, 0, GL_STATIC_DRAW);
-			glBufferSubData(GL_ARRAY_BUFFER, sizeOfVerticesBytes, sizeOfTextureBytes, model->textures);
+			glBufferData(GL_ARRAY_BUFFER, sizeOfVerticesBytes + sizeOfNormalsBytes + sizeOfTextureBytes, 0, GL_STATIC_DRAW);
+			glBufferSubData(GL_ARRAY_BUFFER, sizeOfVerticesBytes + sizeOfNormalsBytes, sizeOfTextureBytes, model->textures);
 		} else if ( model->colors != NULL ) {
-			glBufferData(GL_ARRAY_BUFFER, sizeOfVerticesBytes + sizeOfColorsBytes, 0, GL_STATIC_DRAW);
-			glBufferSubData(GL_ARRAY_BUFFER, sizeOfVerticesBytes, sizeOfColorsBytes, model->colors);
+			glBufferData(GL_ARRAY_BUFFER, sizeOfVerticesBytes + sizeOfNormalsBytes + sizeOfColorsBytes, 0, GL_STATIC_DRAW);
+			glBufferSubData(GL_ARRAY_BUFFER, sizeOfVerticesBytes + sizeOfNormalsBytes, sizeOfColorsBytes, model->colors);
 		}
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeOfVerticesBytes, model->vertices);
+		glBufferSubData(GL_ARRAY_BUFFER, sizeOfVerticesBytes, sizeOfNormalsBytes, model->normals);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -64,12 +67,16 @@ bool Drawable::draw(mat4 modelview, mat4 projection) {
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(0);
 
+	if ( sizeOfNormalsBytes > 0 ) {
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes));
+		glEnableVertexAttribArray(3);
+	}
 	if ( model->textures != NULL ) {
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes + sizeOfNormalsBytes));
 		glEnableVertexAttribArray(2);
 		glBindTexture(GL_TEXTURE_2D, model->texture->getId());
 	} else {
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes + sizeOfNormalsBytes));
 		glEnableVertexAttribArray(1);
 	}
 
@@ -86,6 +93,9 @@ bool Drawable::draw(mat4 modelview, mat4 projection) {
 		glDisableVertexAttribArray(2);
 	} else {
 		glDisableVertexAttribArray(1);
+	}
+	if ( sizeOfNormalsBytes > 0 ) {
+		glDisableVertexAttribArray(3);
 	}
 	glDisableVertexAttribArray(0);
 

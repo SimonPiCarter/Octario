@@ -125,6 +125,16 @@ DrawableModel DrawableFactory::createPlaneModel(float width, float height, float
 								r,g,b};
 	model.sizeColors = 24;
 
+	model.normals = new float[24]{-1,-1,-1,
+								1,-1,-1,
+								1,1,-1,
+								-1,1,-1,
+								-1,-1,1,
+								1,-1,1,
+								1,1,1,
+								-1,1,1};
+	model.sizeNormals = 24;
+
 	model.ibo = new unsigned int[36]{0, 1, 2,    	// Face 1
 									0, 2, 3,     	// Face 1
 									5, 2, 1,		// Face 2
