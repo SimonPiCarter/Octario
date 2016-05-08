@@ -16,5 +16,5 @@ struct DrawableModel {
 
 	Texture* texture;
 
-	DrawableModel() : vertices(NULL), colors(NULL), textures(NULL), texture(NULL), normals(NULL) {}
+	DrawableModel() : vertices(NULL), colors(NULL), textures(NULL), normals(NULL), texture(NULL) {}
 };

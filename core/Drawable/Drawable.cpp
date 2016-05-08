@@ -6,26 +6,26 @@ using namespace glm;
 Drawable::Drawable(DrawableModel* inModel) :
 	model(inModel),
 	shader(),
-	vboId(0),
-	iboId(0),
 	sizeOfVerticesBytes(inModel->sizeVertices*sizeof(float)),
 	sizeOfColorsBytes(inModel->sizeColors*sizeof(float)),
 	sizeOfIboBytes(inModel->sizeIbo*sizeof(unsigned int)),
 	sizeOfTextureBytes(inModel->sizeTexture*sizeof(float)),
-	sizeOfNormalsBytes(inModel->sizeNormals*sizeof(float)) {
+	sizeOfNormalsBytes(inModel->sizeNormals*sizeof(float)),
+	vboId(0),
+	iboId(0) {
 
 }
 
 Drawable::Drawable(DrawableModel* inModel, Shader* inShader) :
 	model(inModel),
 	shader(inShader),
-	vboId(0),
-	iboId(0),
 	sizeOfVerticesBytes(inModel->sizeVertices*sizeof(float)),
 	sizeOfColorsBytes(inModel->sizeColors*sizeof(float)),
 	sizeOfIboBytes(inModel->sizeIbo*sizeof(unsigned int)),
 	sizeOfTextureBytes(inModel->sizeTexture*sizeof(float)),
-	sizeOfNormalsBytes(inModel->sizeNormals*sizeof(float)) {
+	sizeOfNormalsBytes(inModel->sizeNormals*sizeof(float)),
+	vboId(0),
+	iboId(0) {
 
 }
 
@@ -58,6 +58,8 @@ bool Drawable::load() {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return true;
 }
 
 bool Drawable::draw(glm::mat4 view, glm::mat4 modelMat, glm::mat4 projection) {
@@ -111,6 +113,8 @@ bool Drawable::draw(glm::mat4 view, glm::mat4 modelMat, glm::mat4 projection) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glUseProgram(0);
+
+    return true;
 }
 
 void Drawable::clear() {
