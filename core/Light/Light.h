@@ -18,10 +18,15 @@ class Light : public Movable
 		virtual void rotate(glm::vec3 axis, float angle);
 
 		glm::vec4 getPosition();
+
+		void setProperties(float r, float g, float b, float power);
+		void setPower(float power);
+		void setColor(float r, float g, float b);
 	protected:
 
 	private:
 		glm::vec4 position;
 
+		glm::vec4 properties;
 };
 

@@ -28,3 +28,16 @@ void Light::rotate(glm::vec3 axis, float angle) {
 glm::vec4 Light::getPosition() {
 	return position;
 }
+
+
+void Light::setProperties(float r, float g, float b, float power) {
+	properties = glm::vec4(r,g,b,power);
+}
+void Light::setPower(float power) {
+	properties.w = power;
+}
+void Light::setColor(float r, float g, float b) {
+	properties.r = r;
+	properties.g = g;
+	properties.b = b;
+}
