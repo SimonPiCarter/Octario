@@ -16,6 +16,7 @@ in vec3 LightDirection_cameraspace;
 uniform mat4 model;
 uniform mat4 view;
 uniform vec4 pointLightPos[16];
+uniform vec4 pointLightProp[16];
 uniform int pointLightCount;
 
 // Sortie 
@@ -52,7 +53,7 @@ void main()
 		// Ambient : simulates indirect lighting
 		0.4*color +
 		// Diffuse : "color" of the object
-		color * LightColor * LightPower * cosTheta / (distance*distance);
+		color * pointLightProp[0].xyz * pointLightProp[0].w * cosTheta / (distance*distance);
 
     out_Color = vec4(tmpColor, 1.0);
 }

@@ -15,6 +15,7 @@ uniform sampler2D texture;
 uniform mat4 model;
 uniform mat4 view;
 uniform vec4 pointLightPos[16];
+uniform vec4 pointLightProp[16];
 uniform int pointLightCount;
 
 // Sortie 
@@ -26,10 +27,6 @@ out vec4 out_Color;
 
 void main()
 {
-
-	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 50.0f;
-
 
 	// Distance to the light
 	float distance = length( pointLightPos[0].xyz - pos_world );
@@ -51,7 +48,7 @@ void main()
 		// Ambient : simulates indirect lighting
 		0.4*texture(texture, coordTexture).rgb +
 		// Diffuse : "color" of the object
-		texture(texture, coordTexture).rgb * LightColor * LightPower * cosTheta / (distance*distance);
+		texture(texture, coordTexture).rgb * pointLightProp[0].xyz * pointLightProp[0].w * cosTheta / (distance*distance);
 
     out_Color = vec4(tmpColor, 1.0);
 }
