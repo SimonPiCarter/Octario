@@ -12,10 +12,10 @@ class Movable
 
 		glm::mat4 getMatrix();
 
-		void translate(glm::vec3 vector);
-		void translate (float x, float y, float z);
+		virtual void translate(glm::vec3 vector);
+		virtual void translate (float x, float y, float z);
 
-		void rotate(glm::vec3 axis, float angle);
+		virtual void rotate(glm::vec3 axis, float angle);
 
 	protected:
 		glm::mat4 transformation;
