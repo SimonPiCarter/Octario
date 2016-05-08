@@ -12,10 +12,16 @@ class Light : public Movable
 		/** Default destructor */
 		virtual ~Light();
 
+		virtual void translate(glm::vec3 vector);
+		virtual void translate (float x, float y, float z);
+
+		virtual void rotate(glm::vec3 axis, float angle);
+
 		glm::vec4 getPosition();
 	protected:
 
 	private:
 		glm::vec4 position;
+
 };
 
