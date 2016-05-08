@@ -27,28 +27,28 @@ out vec4 out_Color;
 
 void main()
 {
-
-	// Distance to the light
-	float distance = length( pointLightPos[0].xyz - pos_world );
-
-
-	// Normal of the computed fragment, in camera space
-	vec3 n = normalize( normal );
-	// Direction of the light (from the fragment to the light)
-	vec3 l = normalize( pointLightPos[0].xyz - pos_world );
-	// Cosine of the angle between the normal and the light direction, 
-	// clamped above 0
-	//  - light is at the vertical of the triangle -> 1
-	//  - light is perpendicular to the triangle -> 0
-	//  - light is behind the triangle -> 0
-	float cosTheta = clamp( dot( n,l ), 0,1 );
 	
-    // Couleur finale du pixel
-	vec3 tmpColor = 
-		// Ambient : simulates indirect lighting
-		0.4*texture(texture, coordTexture).rgb +
-		// Diffuse : "color" of the object
-		texture(texture, coordTexture).rgb * pointLightProp[0].xyz * pointLightProp[0].w * cosTheta / (distance*distance);
+	// Ambient : simulates indirect lighting
+	vec3 tmpColor = 0.4*texture(texture, coordTexture).rgb;
+	// Diffuse : "color" of the object
+	for ( int i = 0 ; i < pointLightCount ; ++ i ) {
+		// Distance to the light
+		float distance = length( pointLightPos[i].xyz - pos_world );
 
+		// Normal of the computed fragment, in camera space
+		vec3 n = normalize( normal );
+		// Direction of the light (from the fragment to the light)
+		vec3 l = normalize( pointLightPos[i].xyz - pos_world );
+		// Cosine of the angle between the normal and the light direction, 
+		// clamped above 0
+		//  - light is at the vertical of the triangle -> 1
+		//  - light is perpendicular to the triangle -> 0
+		//  - light is behind the triangle -> 0
+		float cosTheta = clamp( dot( n,l ), 0,1 );
+
+		tmpColor += texture(texture, coordTexture).rgb * pointLightProp[i].xyz * pointLightProp[i].w * cosTheta / (distance*distance);
+	}
+
+    // final color
     out_Color = vec4(tmpColor, 1.0);
 }
