@@ -18,6 +18,7 @@ class Light : public Movable
 		virtual void rotate(glm::vec3 axis, float angle);
 
 		glm::vec4 getPosition();
+		glm::vec4 getProperties();
 
 		void setProperties(float r, float g, float b, float power);
 		void setPower(float power);

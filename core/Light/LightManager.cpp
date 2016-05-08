@@ -20,14 +20,16 @@ void LightManager::updatePointLightArray() {
 		delete[] pointLightsPos;
 	}
 	pointLightsPos = new float[getPointLightCount()*4];
+	pointLightsProp = new float[getPointLightCount()*4];
 	int index = 0;
 
 	for ( std::map<std::string,Light*>::iterator it = pointLightPosByName.begin(); it != pointLightPosByName.end() ; ++it ) {
-		glm::vec4 vec = it->second->getPosition();
-		pointLightsPos[index++] = vec.x;
-		pointLightsPos[index++] = vec.y;
-		pointLightsPos[index++] = vec.z;
-		pointLightsPos[index++] = vec.w;
+		glm::vec4 pos = it->second->getPosition();
+		glm::vec4 prop = it->second->getProperties();
+		pointLightsProp[index] = prop.x;	pointLightsPos[index++] = pos.x;
+		pointLightsProp[index] = prop.y;	pointLightsPos[index++] = pos.y;
+		pointLightsProp[index] = prop.z;	pointLightsPos[index++] = pos.z;
+		pointLightsProp[index] = prop.w;	pointLightsPos[index++] = pos.w;
 	}
 }
 
@@ -35,6 +37,10 @@ int LightManager::getPointLightCount() {
 	return pointLightPosByName.size();
 }
 
-float* LightManager::getPointLightArray() {
+float* LightManager::getPointLightsPos() {
 	return pointLightsPos;
+}
+
+float* LightManager::getPointLightsProp() {
+	return pointLightsProp;
 }

@@ -18,16 +18,21 @@ class LightManager : public Singleton<LightManager>
 		void updatePointLightArray();
 
 		int getPointLightCount();
-		float* getPointLightArray();
+		float* getPointLightsPos();
+		float* getPointLightsProp();
 	protected:
-		LightManager() : pointLightsPos(NULL) {}
+		LightManager() : pointLightsPos(NULL), pointLightsProp(NULL) {}
 		virtual ~LightManager() {
 			if ( pointLightsPos != NULL ) {
 				delete[] pointLightsPos;
 			}
+			if ( pointLightsProp != NULL ) {
+				delete[] pointLightsProp;
+			}
 		}
 
 		float* pointLightsPos;
+		float* pointLightsProp;
 		std::map<std::string, Light*> pointLightPosByName;
 	private:
 };

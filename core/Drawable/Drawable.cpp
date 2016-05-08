@@ -88,7 +88,10 @@ bool Drawable::draw(glm::mat4 view, glm::mat4 modelMat, glm::mat4 projection) {
 
 	glUniform4fv(glGetUniformLocation(shader->getProgramID(), "pointLightPos"),
 				LightManager::get().getPointLightCount(),
-				LightManager::get().getPointLightArray());
+				LightManager::get().getPointLightsPos());
+	glUniform4fv(glGetUniformLocation(shader->getProgramID(), "pointLightProp"),
+				LightManager::get().getPointLightCount(),
+				LightManager::get().getPointLightsProp());
 	glUniform1i(glGetUniformLocation(shader->getProgramID(), "pointLightCount"),
 				LightManager::get().getPointLightCount());
 

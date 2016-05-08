@@ -29,6 +29,10 @@ glm::vec4 Light::getPosition() {
 	return position;
 }
 
+glm::vec4 Light::getProperties() {
+	return properties;
+}
+
 
 void Light::setProperties(float r, float g, float b, float power) {
 	properties = glm::vec4(r,g,b,power);
