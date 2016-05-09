@@ -26,4 +26,5 @@ class DrawableFactory : public Singleton<DrawableFactory>
 		DrawableFactory() {}
 		virtual ~DrawableFactory() {}
 	private:
+		void computeTangents(DrawableModel model);
 };

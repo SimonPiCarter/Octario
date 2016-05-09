@@ -11,10 +11,15 @@ struct DrawableModel {
 	int sizeTexture;
 	float* normals;
 	int sizeNormals;
+	float* tangents;
+	int sizeTangents;
+	float* bitangents;
+	int sizeBitangents;
 	unsigned int* ibo;
 	int sizeIbo;
 
 	Texture* texture;
+	Texture* normalTexture;
 
-	DrawableModel() : vertices(NULL), colors(NULL), textures(NULL), normals(NULL), texture(NULL) {}
+	DrawableModel() : vertices(NULL), colors(NULL), textures(NULL), normals(NULL), tangents(NULL), bitangents(NULL), texture(NULL), normalTexture(NULL) {}
 };

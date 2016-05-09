@@ -1,13 +1,14 @@
 // Version du GLSL
 
-#version 150 core
+#version 330 core
 
 
 // Entrées
-
-in vec3 in_Vertex;
-in vec2 in_TexCoord0;
-in vec3 in_Normal;
+layout(location = 0) in vec3 in_Vertex;
+layout(location = 1) in vec3 in_Normal;
+layout(location = 2) in vec3 in_Tangent;
+layout(location = 3) in vec3 in_Bitangent;
+layout(location = 4) in vec2 in_TexCoord0;
 
 
 // Uniform
@@ -21,6 +22,8 @@ uniform mat4 view;
 out vec2 coordTexture;
 out vec3 pos_world;
 out vec3 normal;
+out vec3 tangent;
+out vec3 bitangent;
 
 // Fonction main
 
@@ -34,6 +37,8 @@ void main()
 	vec3 vertexPosition_cameraspace = ( view * model * vec4(pos_world,1)).xyz;
 
 	normal = (model * vec4(in_Normal, 0.0)).xyz;
+	tangent = (model * vec4(in_Tangent, 0.0)).xyz;
+	bitangent = (model * vec4(in_Bitangent, 0.0)).xyz;
 
     // Envoi des coordonnées de texture au Fragment Shader
 

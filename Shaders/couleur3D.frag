@@ -1,13 +1,13 @@
 // Version du GLSL
 
-#version 150 core
+#version 330 core
 
 
 // Entrée
 
 in vec3 normal;
-in vec3 pos_world;
 in vec3 color;
+in vec3 pos_world;
 in vec3 EyeDirection_cameraspace;
 in vec3 LightDirection_cameraspace;
 

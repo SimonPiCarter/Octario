@@ -83,6 +83,8 @@ DrawableModel DrawableFactory::createCubeSampleTextureModel(float size) {
 	model.sizeTexture = 16;
 	model.texture = new Texture("Textures/Caisse.jpg");
 	model.texture->load();
+	model.normalTexture = new Texture("Textures/CaisseNormal.jpg");
+	model.normalTexture->load();
 
 	model.normals = new float[24]{-1,-1,-1,
 								1,-1,-1,
@@ -108,6 +110,8 @@ DrawableModel DrawableFactory::createCubeSampleTextureModel(float size) {
 									7, 6, 2,		// Face 6
 									7, 2, 3};		// Face 6
 	model.sizeIbo = 36;
+
+	computeTangents(model);
 
 	return model;
 }
@@ -160,4 +164,60 @@ DrawableModel DrawableFactory::createPlaneModel(float width, float height, float
 									7, 2, 3};		// Face 6
 	model.sizeIbo = 36;
 	return model;
+}
+
+void DrawableFactory::computeTangents(DrawableModel model) {
+
+	model.tangents = new float[model.sizeVertices];
+	model.bitangents = new float[model.sizeVertices];
+	model.sizeTangents = model.sizeVertices;
+	model.sizeBitangents = model.sizeVertices;
+
+    for ( int i=0; i<model.sizeIbo; i+=3){
+
+        // Shortcuts for vertices
+        glm::vec3 v0 = glm::vec3(model.vertices[model.ibo[i]*3],model.vertices[model.ibo[i]*3+1],model.vertices[model.ibo[i]*3+2]);
+        glm::vec3 v1 = glm::vec3(model.vertices[model.ibo[i+1]*3],model.vertices[model.ibo[i+1]*3+1],model.vertices[model.ibo[i+1]*3+2]);
+        glm::vec3 v2 = glm::vec3(model.vertices[model.ibo[i+2]*3],model.vertices[model.ibo[i+2]*3+1],model.vertices[model.ibo[i+2]*3+2]);
+
+        // Shortcuts for UVs
+        glm::vec2 uv0 = glm::vec2(model.textures[model.ibo[i]*3],model.textures[model.ibo[i]*3+1]);
+        glm::vec2 uv1 = glm::vec2(model.textures[model.ibo[i+1]*3],model.textures[model.ibo[i+1]*3+1]);
+        glm::vec2 uv2 = glm::vec2(model.textures[model.ibo[i+2]*3],model.textures[model.ibo[i+2]*3+1]);
+
+        // Edges of the triangle : postion delta
+        glm::vec3 deltaPos1 = v1-v0;
+        glm::vec3 deltaPos2 = v2-v0;
+
+        // UV delta
+        glm::vec2 deltaUV1 = uv1-uv0;
+        glm::vec2 deltaUV2 = uv2-uv0;
+		float r = 0;
+		if ( deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x > 0.00001f || deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x < -0.00001f )
+			r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+
+        glm::vec3 tangent = (deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y)*r;
+        glm::vec3 bitangent = (deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x)*r;
+
+		// Set the same tangent for all three vertices of the triangle.
+		model.tangents[model.ibo[i]*3] += tangent.x;
+		model.tangents[model.ibo[i]*3+1] += tangent.y;
+		model.tangents[model.ibo[i]*3+2] += tangent.z;
+		model.tangents[model.ibo[i+1]*3] += tangent.x;
+		model.tangents[model.ibo[i+1]*3+1] += tangent.y;
+		model.tangents[model.ibo[i+1]*3+2] += tangent.z;
+		model.tangents[model.ibo[i+2]*3] += tangent.x;
+		model.tangents[model.ibo[i+2]*3+1] += tangent.y;
+		model.tangents[model.ibo[i+2]*3+2] += tangent.z;
+
+		model.bitangents[model.ibo[i]*3] += bitangent.x;
+		model.bitangents[model.ibo[i]*3+1] += bitangent.y;
+		model.bitangents[model.ibo[i]*3+2] += bitangent.z;
+		model.bitangents[model.ibo[i+1]*3] += bitangent.x;
+		model.bitangents[model.ibo[i+1]*3+1] += bitangent.y;
+		model.bitangents[model.ibo[i+1]*3+2] += bitangent.z;
+		model.bitangents[model.ibo[i+2]*3] += bitangent.x;
+		model.bitangents[model.ibo[i+2]*3+1] += bitangent.y;
+		model.bitangents[model.ibo[i+2]*3+2] += bitangent.z;
+    }
 }
