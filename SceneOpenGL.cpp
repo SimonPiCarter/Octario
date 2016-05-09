@@ -135,8 +135,13 @@ void SceneOpenGL::bouclePrincipale()
 	// Load light
 	Light light;
 	light.translate(5,5,5);
+	light.setProperties(1,1,1,50);
+	Light light2;
+	light2.translate(-7,-3,0);
+	light2.setProperties(1,0.2,0.2,50);
 
 	LightManager::get().addPointLight("testLight",&light);
+	LightManager::get().addPointLight("testLight2",&light2);
 
     // Matrices
     mat4 projection;
@@ -149,6 +154,8 @@ void SceneOpenGL::bouclePrincipale()
 	Uint32 start_time = SDL_GetTicks();
 	Uint32 elapsed_time = 0;
 	Uint32 frame_count = 0;
+
+	SDL_GL_SetSwapInterval(0);
 
     // Boucle principale
     while(!terminer)
