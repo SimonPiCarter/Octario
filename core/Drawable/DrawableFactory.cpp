@@ -167,10 +167,13 @@ DrawableModel DrawableFactory::createPlaneModel(float width, float height, float
 									7, 6, 2,		// Face 6
 									7, 2, 3};		// Face 6
 	model.sizeIbo = 36;
+
+	computeTangents(model);
+
 	return model;
 }
 
-void DrawableFactory::computeTangents(DrawableModel model) {
+void DrawableFactory::computeTangents(DrawableModel &model) {
 
 	model.tangents = new float[model.sizeVertices];
 	model.bitangents = new float[model.sizeVertices];

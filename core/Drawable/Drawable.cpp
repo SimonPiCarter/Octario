@@ -18,19 +18,6 @@ Drawable::Drawable(DrawableModel* inModel) :
 
 }
 
-Drawable::Drawable(DrawableModel* inModel, Shader* inShader) :
-	model(inModel),
-	shader(inShader),
-	sizeOfVerticesBytes(inModel->sizeVertices*sizeof(float)),
-	sizeOfColorsBytes(inModel->sizeColors*sizeof(float)),
-	sizeOfIboBytes(inModel->sizeIbo*sizeof(unsigned int)),
-	sizeOfTextureBytes(inModel->sizeTexture*sizeof(float)),
-	sizeOfNormalsBytes(inModel->sizeNormals*sizeof(float)),
-	vboId(0),
-	iboId(0) {
-
-}
-
 Drawable::~Drawable() {
 	clear();
 }
@@ -66,7 +53,7 @@ bool Drawable::load() {
 	return true;
 }
 
-bool Drawable::draw() {
+bool Drawable::draw(const Shader& inShader) {
 
 	glBindBuffer(GL_ARRAY_BUFFER, vboId);
 
@@ -84,7 +71,7 @@ bool Drawable::draw() {
 			glEnableVertexAttribArray(3);
 			glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes + sizeOfNormalsBytes + sizeOfTangentsBytes + sizeOfBitangentsBytes));
 			glEnableVertexAttribArray(4);
-			shader->digestModel(model);
+			inShader.digestModel(model);
 		} else {
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes + sizeOfNormalsBytes));
 			glEnableVertexAttribArray(2);

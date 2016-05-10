@@ -45,7 +45,7 @@ void Node::draw(const glm::mat4& view, glm::mat4 modelMat, const glm::mat4& proj
 
 	// Draw all drawables
 	for ( std::map<std::string,Drawable*>::iterator it = drawables.begin(); it != drawables.end() ; ++it ) {
-		it->second->draw();
+		it->second->draw(shader);
 	}
 
 	// Draw all sub nodes

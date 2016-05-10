@@ -20,13 +20,12 @@ class Drawable
 	public:
 		/** Default constructor */
 		Drawable(DrawableModel* inModel);
-		Drawable(DrawableModel* inModel, Shader* inShader);
 		/** Default destructor */
 		virtual ~Drawable();
 
 		virtual bool load();
 
-		virtual bool draw();
+		virtual bool draw(const Shader& inShader);
 
 	protected:
 		DrawableModel* model;
