@@ -156,10 +156,21 @@ void SceneOpenGL::bouclePrincipale()
 
 	SDL_GL_SetSwapInterval(0);
 
-
     // Boucle principale
     while(!terminer)
     {
+        glUniform4fv(glGetUniformLocation(shader.getProgramID(), "pointLightPos"),
+                    LightManager::get().getPointLightCount(),
+                    LightManager::get().getPointLightsPos());
+        glUniform4fv(glGetUniformLocation(shader.getProgramID(), "pointLightProp"),
+                    LightManager::get().getPointLightCount(),
+                    LightManager::get().getPointLightsProp());
+        glUniform1i(glGetUniformLocation(shader.getProgramID(), "pointLightCount"),
+                    LightManager::get().getPointLightCount());
+
+        glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "view"), 1, GL_FALSE, value_ptr(modelview));
+        glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
+
 		elapsed_time = SDL_GetTicks()-start_time;
 		++frame_count;
 

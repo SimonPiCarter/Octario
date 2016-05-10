@@ -98,19 +98,8 @@ bool Drawable::draw(glm::mat4 view, glm::mat4 modelMat, glm::mat4 projection) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
 
-	glUniform4fv(glGetUniformLocation(shader->getProgramID(), "pointLightPos"),
-				LightManager::get().getPointLightCount(),
-				LightManager::get().getPointLightsPos());
-	glUniform4fv(glGetUniformLocation(shader->getProgramID(), "pointLightProp"),
-				LightManager::get().getPointLightCount(),
-				LightManager::get().getPointLightsProp());
-	glUniform1i(glGetUniformLocation(shader->getProgramID(), "pointLightCount"),
-				LightManager::get().getPointLightCount());
-
 	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "mvp"), 1, GL_FALSE, value_ptr(projection*view*modelMat));
 	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "model"), 1, GL_FALSE, value_ptr(modelMat));
-	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "view"), 1, GL_FALSE, value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
 
 	glDrawElements(GL_TRIANGLES, model->sizeIbo, GL_UNSIGNED_INT, (GLvoid*)0);
 
