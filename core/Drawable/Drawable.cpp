@@ -66,7 +66,7 @@ bool Drawable::load() {
 	return true;
 }
 
-bool Drawable::draw(glm::mat4 view, glm::mat4 modelMat, glm::mat4 projection) {
+bool Drawable::draw(const glm::mat4& view, const glm::mat4& modelMat, const glm::mat4& projection) {
 
 	glBindBuffer(GL_ARRAY_BUFFER, vboId);
 

@@ -26,7 +26,7 @@ class Drawable
 
 		virtual bool load();
 
-		virtual bool draw(glm::mat4 view, glm::mat4 modelMat, glm::mat4 projection);
+		virtual bool draw(const glm::mat4& view, const glm::mat4& modelMat, const glm::mat4& projection);
 
 	protected:
 		DrawableModel* model;

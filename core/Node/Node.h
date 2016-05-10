@@ -24,7 +24,7 @@ class Node : public Movable
 		Node* detachSubNode(std::string name);
 		Drawable* detachDrawable(std::string name);
 
-		void draw(glm::mat4 view, glm::mat4 modelMat, glm::mat4 projection);
+		void draw(const glm::mat4& view, glm::mat4 modelMat, const glm::mat4& projection);
 
 	protected:
 		std::map<std::string, Node*> subNodes;
