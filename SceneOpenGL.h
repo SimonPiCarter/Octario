@@ -13,6 +13,7 @@
 #include <iostream>
 #include <string>
 
+#include "core/core.h"
 
 // Classe
 
@@ -29,6 +30,7 @@ class SceneOpenGL
 
 
     private:
+    void standardDisplay(Node& mainNode, const glm::mat4& modelview, const glm::mat4& projection);
 
     std::string m_titreFenetre;
     int m_largeurFenetre;
@@ -37,4 +39,6 @@ class SceneOpenGL
     SDL_Window* m_fenetre;
     SDL_GLContext m_contexteOpenGL;
     SDL_Event m_evenements;
+
+	Shader shader;
 };

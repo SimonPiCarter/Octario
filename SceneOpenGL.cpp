@@ -1,5 +1,4 @@
 #include "SceneOpenGL.h"
-#include "core/core.h"
 
 #include <iostream>
 #include <sstream>
@@ -110,9 +109,7 @@ void SceneOpenGL::bouclePrincipale()
     // Division du paramètre taille
 	taille /= 2.f;
 
-	Shader shader;
 	shader.load();
-	glUseProgram(shader.getProgramID());
 
 	DrawableModel model = DrawableFactory::get().createCubeSampleTextureModel(2.0f);
 	Drawable cube(&model,&shader);
@@ -159,17 +156,6 @@ void SceneOpenGL::bouclePrincipale()
     // Boucle principale
     while(!terminer)
     {
-        glUniform4fv(glGetUniformLocation(shader.getProgramID(), "pointLightPos"),
-                    LightManager::get().getPointLightCount(),
-                    LightManager::get().getPointLightsPos());
-        glUniform4fv(glGetUniformLocation(shader.getProgramID(), "pointLightProp"),
-                    LightManager::get().getPointLightCount(),
-                    LightManager::get().getPointLightsProp());
-        glUniform1i(glGetUniformLocation(shader.getProgramID(), "pointLightCount"),
-                    LightManager::get().getPointLightCount());
-
-        glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "view"), 1, GL_FALSE, value_ptr(modelview));
-        glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
 
 		elapsed_time = SDL_GetTicks()-start_time;
 		++frame_count;
@@ -190,16 +176,33 @@ void SceneOpenGL::bouclePrincipale()
         if(m_evenements.window.event == SDL_WINDOWEVENT_CLOSE)
             terminer = true;
 
+        standardDisplay(mainNode,modelview,projection);
 
-        // Nettoyage de l'ecran
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Rotation du repere
-		mainNode.rotate(vec3(0, 1, 0),0.05f);
-
-        mainNode.draw(modelview,glm::mat4(1), projection,shader);
-
-        // Actualisation de la fenêtre
+        // display swap buffer
         SDL_GL_SwapWindow(m_fenetre);
     }
+}
+
+void SceneOpenGL::standardDisplay(Node& mainNode, const mat4& modelview, const mat4& projection) {
+    glUseProgram(shader.getProgramID());
+
+    glUniform4fv(glGetUniformLocation(shader.getProgramID(), "pointLightPos"),
+                LightManager::get().getPointLightCount(),
+                LightManager::get().getPointLightsPos());
+    glUniform4fv(glGetUniformLocation(shader.getProgramID(), "pointLightProp"),
+                LightManager::get().getPointLightCount(),
+                LightManager::get().getPointLightsProp());
+    glUniform1i(glGetUniformLocation(shader.getProgramID(), "pointLightCount"),
+                LightManager::get().getPointLightCount());
+
+    glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "view"), 1, GL_FALSE, value_ptr(modelview));
+    glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
+
+    // Nettoyage de l'ecran
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Rotation du repere
+    mainNode.rotate(vec3(0, 1, 0),0.05f);
+
+    mainNode.draw(modelview,glm::mat4(1), projection,shader);
 }
