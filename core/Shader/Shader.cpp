@@ -271,7 +271,7 @@ GLuint Shader::getProgramID() const
     return m_programID;
 }
 
-void Shader::digestModel(DrawableModel* model) {
+void Shader::digestModel(DrawableModel* model) const {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, model->texture->getId());
     glUniform1i(glGetUniformLocation(getProgramID(), "texture"), 0);

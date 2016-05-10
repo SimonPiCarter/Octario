@@ -48,7 +48,7 @@ class Shader
     bool compilerShader(GLuint &shader, GLenum type, std::string const &fichierSource);
     GLuint getProgramID() const;
 
-    virtual void digestModel(DrawableModel* model);
+    virtual void digestModel(DrawableModel* model) const;
 
     protected:
     Shader(std::string vertexSource, std::string fragmentSource);

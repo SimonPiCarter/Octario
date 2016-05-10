@@ -1,5 +1,4 @@
-#ifndef SHADOWMAPSHADER_H
-#define SHADOWMAPSHADER_H
+#pragma once
 
 #include "Shader.h"
 
@@ -13,5 +12,3 @@ class ShadowMapShader : public Shader
 
     virtual void digestModel(DrawableModel* model);
 };
-
-#endif // SHADOWMAPSHADER_H

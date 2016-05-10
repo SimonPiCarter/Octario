@@ -110,13 +110,14 @@ void SceneOpenGL::bouclePrincipale()
 	taille /= 2.f;
 
 	shader.load();
+	shadowMapShader.load();
 
 	DrawableModel model = DrawableFactory::get().createCubeSampleTextureModel(2.0f);
-	Drawable cube(&model,&shader);
+	Drawable cube(&model);
 	cube.load();
 
 	DrawableModel modelPlane = DrawableFactory::get().createPlaneModel(7.f,4.f,0.1f,0.5f,0.5f,0.5f);
-	Drawable plane(&modelPlane,&shader);
+	Drawable plane(&modelPlane);
 	plane.load();
 
 	Node mainNode;
@@ -141,11 +142,14 @@ void SceneOpenGL::bouclePrincipale()
 
     // Matrices
     mat4 projection;
-    mat4 modelview;
+    mat4 shadowMapProjection;
+    mat4 view;
 
     projection = perspective(70.0, (double) m_largeurFenetre / m_hauteurFenetre, 1.0, 100.0);
-    modelview = lookAt(vec3(5, 5, 5), vec3(0, 0, 0), vec3(0, 1, 0));
+    shadowMapProjection = perspective(90.0, (double) m_largeurFenetre / m_hauteurFenetre, 1.0, 100.0);
+    view = lookAt(vec3(5, 5, 5), vec3(0, 0, 0), vec3(0, 1, 0));
 
+    fbo.init(m_largeurFenetre, m_hauteurFenetre);
 
 	Uint32 start_time = SDL_GetTicks();
 	Uint32 elapsed_time = 0;
@@ -176,14 +180,21 @@ void SceneOpenGL::bouclePrincipale()
         if(m_evenements.window.event == SDL_WINDOWEVENT_CLOSE)
             terminer = true;
 
-        standardDisplay(mainNode,modelview,projection);
+        // Rotation du repere
+        mainNode.rotate(vec3(0, 1, 0),0.05f);
+
+        shadowMapPass(light,mainNode,shadowMapProjection);
+
+        displayPass(mainNode,view,projection);
 
         // display swap buffer
         SDL_GL_SwapWindow(m_fenetre);
     }
 }
 
-void SceneOpenGL::standardDisplay(Node& mainNode, const mat4& modelview, const mat4& projection) {
+void SceneOpenGL::displayPass(Node& mainNode, const mat4& view, const mat4& projection) {
+    glCullFace(GL_BACK);
+
     glUseProgram(shader.getProgramID());
 
     glUniform4fv(glGetUniformLocation(shader.getProgramID(), "pointLightPos"),
@@ -195,14 +206,44 @@ void SceneOpenGL::standardDisplay(Node& mainNode, const mat4& modelview, const m
     glUniform1i(glGetUniformLocation(shader.getProgramID(), "pointLightCount"),
                 LightManager::get().getPointLightCount());
 
-    glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "view"), 1, GL_FALSE, value_ptr(modelview));
+    glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "view"), 1, GL_FALSE, value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
 
-    // Nettoyage de l'ecran
+    fbo.bindForReading(GL_TEXTURE2);
+    glUniform1i(glGetUniformLocation(shader.getProgramID(), "shadowMap"), 2);
+
+    // Clear screen
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Rotation du repere
-    mainNode.rotate(vec3(0, 1, 0),0.05f);
+    mainNode.draw(view,glm::mat4(1), projection,shader);
+}
 
-    mainNode.draw(modelview,glm::mat4(1), projection,shader);
+void SceneOpenGL::shadowMapPass(Light &light, Node& mainNode, const mat4& projection) {
+
+    mat4 view;
+    vec4 lightPos4 = light.getPosition();
+    vec3 lightPos3(lightPos4.x,lightPos4.y,lightPos4.z);
+
+    glCullFace(GL_FRONT);
+
+    glUseProgram(shadowMapShader.getProgramID());
+    glUniformMatrix4fv(glGetUniformLocation(shadowMapShader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
+    glUniformMatrix4fv(glGetUniformLocation(shadowMapShader.getProgramID(), "lightPos"), 1, GL_FALSE, value_ptr(lightPos3));
+
+    // Clear screen
+    glClearColor(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
+
+    for (unsigned int i = 0 ; i < CameraDirection::NUM_OF_LAYERS ; i++) {
+        fbo.bindForWriting(cameraDirection[i].CubemapFace);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+        view = lookAt(lightPos3, cameraDirection[i].Target, cameraDirection[i].Up);
+
+        glUniformMatrix4fv(glGetUniformLocation(shadowMapShader.getProgramID(), "view"), 1, GL_FALSE, value_ptr(view));
+
+        mainNode.draw(view, glm::mat4(1), projection, shadowMapShader);
+    }
+
 }
