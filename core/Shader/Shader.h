@@ -29,6 +29,8 @@
 #include <string>
 #include <fstream>
 
+#include "../Drawable/DrawableModel.h"
+
 
 // Classe Shader
 
@@ -47,6 +49,7 @@ class Shader
     bool compilerShader(GLuint &shader, GLenum type, std::string const &fichierSource);
     GLuint getProgramID() const;
 
+    virtual void digestModel(DrawableModel* model);
 
     private:
 

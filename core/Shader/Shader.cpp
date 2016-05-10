@@ -271,3 +271,12 @@ GLuint Shader::getProgramID() const
 {
     return m_programID;
 }
+
+void Shader::digestModel(DrawableModel* model) {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, model->texture->getId());
+    glUniform1i(glGetUniformLocation(getProgramID(), "texture"), 0);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, model->normalTexture->getId());
+    glUniform1i(glGetUniformLocation(getProgramID(), "normalTexture"), 1);
+}

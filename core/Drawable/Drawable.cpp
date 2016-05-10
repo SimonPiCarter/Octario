@@ -84,12 +84,7 @@ bool Drawable::draw() {
 			glEnableVertexAttribArray(3);
 			glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes + sizeOfNormalsBytes + sizeOfTangentsBytes + sizeOfBitangentsBytes));
 			glEnableVertexAttribArray(4);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, model->texture->getId());
-			glUniform1i(glGetUniformLocation(shader->getProgramID(), "texture"), 0);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, model->normalTexture->getId());
-			glUniform1i(glGetUniformLocation(shader->getProgramID(), "normalTexture"), 1);
+			shader->digestModel(model);
 		} else {
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeOfVerticesBytes + sizeOfNormalsBytes));
 			glEnableVertexAttribArray(2);
