@@ -40,8 +40,7 @@ class Shader
 
     Shader();
     Shader(Shader const &shaderACopier);
-    Shader(std::string vertexSource, std::string fragmentSource);
-    ~Shader();
+    virtual ~Shader();
 
     Shader& operator=(Shader const &shaderACopier);
 
@@ -51,7 +50,8 @@ class Shader
 
     virtual void digestModel(DrawableModel* model);
 
-    private:
+    protected:
+    Shader(std::string vertexSource, std::string fragmentSource);
 
     GLuint m_vertexID;
     GLuint m_fragmentID;

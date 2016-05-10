@@ -110,7 +110,7 @@ void SceneOpenGL::bouclePrincipale()
     // Division du paramètre taille
 	taille /= 2.f;
 
-	Shader shader("Shaders/texture.vert","Shaders/texture.frag");
+	Shader shader;
 	shader.load();
 	glUseProgram(shader.getProgramID());
 

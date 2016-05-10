@@ -2,7 +2,7 @@
 
 // Constructeurs et Destructeur
 
-Shader::Shader() : m_vertexID(0), m_fragmentID(0), m_programID(0), m_vertexSource(), m_fragmentSource()
+Shader::Shader() : m_vertexID(0), m_fragmentID(0), m_programID(0), m_vertexSource("Shaders/texture.vert"), m_fragmentSource("Shaders/texture.frag")
 {
 }
 
@@ -29,8 +29,7 @@ Shader::Shader(std::string vertexSource, std::string fragmentSource) : m_vertexI
 
 Shader::~Shader()
 {
-    // Destruction du shader
-
+    // Destruction of shader
     glDeleteShader(m_vertexID);
     glDeleteShader(m_fragmentID);
     glDeleteProgram(m_programID);
