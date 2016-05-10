@@ -4,7 +4,7 @@ in vec3 pos_world;
 
 uniform vec3 lightPos;
 
-out float FragColor;
+out float out_Color;
         
 void main()
 {
@@ -12,6 +12,6 @@ void main()
 
     float LightToPixelDistance = dot(LightToVertex,LightToVertex);
 
-    FragColor = LightToPixelDistance;
+    out_Color = LightToPixelDistance;
 }
 

@@ -90,21 +90,10 @@ bool Shader::load()
     glAttachShader(m_programID, m_vertexID);
     glAttachShader(m_programID, m_fragmentID);
 
-
-    // Verrouillage des entrées shader
-
-    glBindAttribLocation(m_programID, 0, "in_Vertex");
-    glBindAttribLocation(m_programID, 1, "in_Color");
-    glBindAttribLocation(m_programID, 2, "in_TexCoord0");
-
-
     // Linkage du programme
-
     glLinkProgram(m_programID);
 
-
     // Vérification du linkage
-
     GLint erreurLink(0);
     glGetProgramiv(m_programID, GL_LINK_STATUS, &erreurLink);
 
@@ -114,39 +103,26 @@ bool Shader::load()
     if(erreurLink != GL_TRUE)
     {
         // Récupération de la taille de l'erreur
-
         GLint tailleErreur(0);
         glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &tailleErreur);
 
-
         // Allocation de mémoire
-
         char *erreur = new char[tailleErreur + 1];
 
-
         // Récupération de l'erreur
-
         glGetShaderInfoLog(m_programID, tailleErreur, &tailleErreur, erreur);
         erreur[tailleErreur] = '\0';
 
-
         // Affichage de l'erreur
-
         std::cout << erreur << std::endl;
 
-
         // Libération de la mémoire et retour du booléen false
-
         delete[] erreur;
         glDeleteProgram(m_programID);
 
         return false;
     }
-
-
-
     // Sinon c'est que tout s'est bien passé
-
     else
         return true;
 }
@@ -155,26 +131,20 @@ bool Shader::load()
 bool Shader::compilerShader(GLuint &shader, GLenum type, std::string const &fichierSource)
 {
     // Création du shader
-
     shader = glCreateShader(type);
 
-
     // Vérification du shader
-
     if(shader == 0)
     {
         std::cout << "Erreur, le type de shader (" << type << ") n'existe pas" << std::endl;
         return false;
     }
 
-
     // Flux de lecture
-
     std::ifstream fichier(fichierSource.c_str());
 
 
     // Test d'ouverture
-
     if(!fichier)
     {
         std::cout << "Erreur le fichier " << fichierSource << " est introuvable" << std::endl;
@@ -183,73 +153,50 @@ bool Shader::compilerShader(GLuint &shader, GLenum type, std::string const &fich
         return false;
     }
 
-
     // Strings permettant de lire le code source
-
     std::string ligne;
     std::string codeSource;
 
-
     // Lecture
-
     while(getline(fichier, ligne))
         codeSource += ligne + '\n';
 
-
     // Fermeture du fichier
-
     fichier.close();
 
 
     // Récupération de la chaine C du code source
-
     const GLchar* chaineCodeSource = codeSource.c_str();
 
-
     // Envoi du code source au shader
-
     glShaderSource(shader, 1, &chaineCodeSource, 0);
 
-
     // Compilation du shader
-
     glCompileShader(shader);
 
-
     // Vérification de la compilation
-
     GLint erreurCompilation(0);
     glGetShaderiv(shader, GL_COMPILE_STATUS, &erreurCompilation);
 
-
     // S'il y a eu une erreur
-
     if(erreurCompilation != GL_TRUE)
     {
         // Récupération de la taille de l'erreur
-
         GLint tailleErreur(0);
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &tailleErreur);
 
-
         // Allocation de mémoire
-
         char *erreur = new char[tailleErreur + 1];
 
-
         // Récupération de l'erreur
-
         glGetShaderInfoLog(shader, tailleErreur, &tailleErreur, erreur);
         erreur[tailleErreur] = '\0';
 
-
         // Affichage de l'erreur
-
         std::cout << erreur << std::endl;
 
 
         // Libération de la mémoire et retour du booléen false
-
         delete[] erreur;
         glDeleteShader(shader);
 
