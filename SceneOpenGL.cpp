@@ -112,15 +112,14 @@ void SceneOpenGL::bouclePrincipale()
 
 	Shader shader("Shaders/texture.vert","Shaders/texture.frag");
 	shader.load();
-	Shader shaderPlane("Shaders/couleur3D.vert","Shaders/couleur3D.frag");
-	shaderPlane.load();
+	glUseProgram(shader.getProgramID());
 
 	DrawableModel model = DrawableFactory::get().createCubeSampleTextureModel(2.0f);
 	Drawable cube(&model,&shader);
 	cube.load();
 
 	DrawableModel modelPlane = DrawableFactory::get().createPlaneModel(7.f,4.f,0.1f,0.5f,0.5f,0.5f);
-	Drawable plane(&modelPlane,&shaderPlane);
+	Drawable plane(&modelPlane,&shader);
 	plane.load();
 
 	Node mainNode;
@@ -156,6 +155,7 @@ void SceneOpenGL::bouclePrincipale()
 	Uint32 frame_count = 0;
 
 	SDL_GL_SetSwapInterval(0);
+
 
     // Boucle principale
     while(!terminer)

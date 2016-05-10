@@ -68,7 +68,6 @@ bool Drawable::load() {
 
 bool Drawable::draw(glm::mat4 view, glm::mat4 modelMat, glm::mat4 projection) {
 
-    glUseProgram(shader->getProgramID());
 	glBindBuffer(GL_ARRAY_BUFFER, vboId);
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -129,8 +128,6 @@ bool Drawable::draw(glm::mat4 view, glm::mat4 modelMat, glm::mat4 projection) {
 	glDisableVertexAttribArray(0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    glUseProgram(0);
 
     return true;
 }

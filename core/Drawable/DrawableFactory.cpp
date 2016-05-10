@@ -130,15 +130,19 @@ DrawableModel DrawableFactory::createPlaneModel(float width, float height, float
 									-width, height, thickness};		// 7
 	model.sizeVertices = 24;
 
-	model.colors = new float[24]{r,g,b,
-								r,g,b,
-								r,g,b,
-								r,g,b,
-								r,g,b,
-								r,g,b,
-								r,g,b,
-								r,g,b};
-	model.sizeColors = 24;
+	model.textures = new float[16]{0,0,
+								   1,0,
+								   1,1,
+								   0,1,
+								   0,0,
+								   1,0,
+								   1,1,
+								   0,1};
+	model.sizeTexture = 16;
+	model.texture = new Texture("Textures/gray.png");
+	model.texture->load();
+	model.normalTexture = new Texture("Textures/grayNormal.png");
+	model.normalTexture->load();
 
 	model.normals = new float[24]{-1,-1,-1,
 								1,-1,-1,
