@@ -66,7 +66,7 @@ bool Drawable::load() {
 	return true;
 }
 
-bool Drawable::draw(const glm::mat4& view, const glm::mat4& modelMat, const glm::mat4& projection) {
+bool Drawable::draw() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, vboId);
 
@@ -97,9 +97,6 @@ bool Drawable::draw(const glm::mat4& view, const glm::mat4& modelMat, const glm:
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
-
-	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "mvp"), 1, GL_FALSE, value_ptr(projection*view*modelMat));
-	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "model"), 1, GL_FALSE, value_ptr(modelMat));
 
 	glDrawElements(GL_TRIANGLES, model->sizeIbo, GL_UNSIGNED_INT, (GLvoid*)0);
 

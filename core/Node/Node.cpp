@@ -1,5 +1,7 @@
 #include "Node.h"
 
+using namespace glm;
+
 Node::Node() : Movable()
 {
 	//ctor
@@ -35,15 +37,19 @@ Drawable* Node::detachDrawable(std::string name) {
 	return drawable;
 }
 
-void Node::draw(const glm::mat4& view, glm::mat4 modelMat, const glm::mat4& projection) {
+void Node::draw(const glm::mat4& view, glm::mat4 modelMat, const glm::mat4& projection, const Shader& shader) {
     modelMat *= transformation;
+
+	glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "mvp"), 1, GL_FALSE, value_ptr(projection*view*modelMat));
+	glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "model"), 1, GL_FALSE, value_ptr(modelMat));
+
 	// Draw all drawables
 	for ( std::map<std::string,Drawable*>::iterator it = drawables.begin(); it != drawables.end() ; ++it ) {
-		it->second->draw(view,modelMat,projection);
+		it->second->draw();
 	}
 
 	// Draw all sub nodes
 	for ( std::map<std::string,Node*>::iterator it = subNodes.begin(); it!=subNodes.end(); ++it ) {
-		it->second->draw(view,modelMat,projection);
+		it->second->draw(view,modelMat,projection,shader);
 	}
 }

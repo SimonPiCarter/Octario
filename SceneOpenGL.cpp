@@ -197,7 +197,7 @@ void SceneOpenGL::bouclePrincipale()
 		// Rotation du repere
 		mainNode.rotate(vec3(0, 1, 0),0.05f);
 
-        mainNode.draw(modelview,glm::mat4(1), projection);
+        mainNode.draw(modelview,glm::mat4(1), projection,shader);
 
         // Actualisation de la fenêtre
         SDL_GL_SwapWindow(m_fenetre);
