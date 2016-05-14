@@ -41,7 +41,7 @@ float calcShadowFactor(vec3 lightToFrag)
 }
 
 vec3 computeColor() {
-	vec3 coord = vec3(0,0,1);//texture( normalTexture, coordTexture ).rgb*2.0 - 1.0;
+	vec3 coord = texture( normalTexture, coordTexture ).rgb*2.0 - 1.0;
 	// Normal of the computed fragment, in camera space
 	vec3 n = normalize(coord.r*tangent + coord.g*bitangent + coord.b*normal);
 	

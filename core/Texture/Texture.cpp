@@ -50,8 +50,8 @@ bool Texture::load()
     }
 
 
-    SDL_Surface *oppositeImage = inverse(imageSDL);
-    SDL_FreeSurface(imageSDL);
+    SDL_Surface *oppositeImage = imageSDL;
+    //SDL_FreeSurface(imageSDL);
 
     if(glIsTexture(id) == GL_TRUE)
         glDeleteTextures(1, &id);
