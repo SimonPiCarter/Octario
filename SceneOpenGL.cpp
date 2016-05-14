@@ -79,6 +79,7 @@ bool SceneOpenGL::initGL()
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_TEXTURE_CUBE_MAP);
 
+
 	// Si l'initialisation a échoué :
 	if(initialisationGLEW != GLEW_OK)
 	{
@@ -96,7 +97,7 @@ bool SceneOpenGL::initGL()
 
 
     glEnable(GL_DEPTH_TEST);
-    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
 
     return true;
 }
@@ -116,7 +117,7 @@ void SceneOpenGL::bouclePrincipale()
 	Drawable cube(&model);
 	cube.load();
 
-	DrawableModel modelPlane = DrawableFactory::get().createPlaneModel(7.f,4.f,0.1f,0.5f,0.5f,0.5f);
+	DrawableModel modelPlane = DrawableFactory::get().createPlaneModel(7.f,4.f,1.f,0.5f,0.5f,0.5f);
 	Drawable plane(&modelPlane);
 	plane.load();
 
