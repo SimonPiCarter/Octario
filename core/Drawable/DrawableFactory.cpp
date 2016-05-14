@@ -72,44 +72,13 @@ DrawableModel DrawableFactory::createCubeSampleTextureModel(float size) {
 									-size, size, size};		// 7
 	model.sizeVertices = 24;
 
-	model.textures = new float[16]{0,0,
-								   1,0,
-								   1,1,
-								   0,1,
-								   0,0,
-								   1,0,
-								   1,1,
-								   0,1};
-	model.sizeTexture = 16;
+	buildCubeDataInModel(model);
+
 	model.texture = new Texture("Textures/Caisse.jpg");
 	model.texture->load();
 	model.normalTexture = new Texture("Textures/CaisseNormal.jpg");
 	model.normalTexture->load();
 
-	model.normals = new float[24]{-1,-1,-1,
-								1,-1,-1,
-								1,1,-1,
-								-1,1,-1,
-								-1,-1,1,
-								1,-1,1,
-								1,1,1,
-								-1,1,1};
-	model.sizeNormals = 24;
-
-
-	model.ibo = new unsigned int[36]{0, 1, 2,    	// Face 1
-									0, 2, 3,     	// Face 1
-									5, 2, 1,		// Face 2
-									5, 6, 2,		// Face 2
-									4, 5, 1,		// Face 3
-									4, 1, 0,		// Face 3
-									4, 6, 5,		// Face 4
-									4, 7, 6,		// Face 4
-									0, 7, 4,		// Face 5
-									0, 3, 7,		// Face 5
-									7, 6, 2,		// Face 6
-									7, 2, 3};		// Face 6
-	model.sizeIbo = 36;
 
 	computeTangents(model);
 
@@ -130,43 +99,12 @@ DrawableModel DrawableFactory::createPlaneModel(float width, float height, float
 									-width, height, thickness};		// 7
 	model.sizeVertices = 24;
 
-	model.textures = new float[16]{0,0,
-								   1,0,
-								   1,1,
-								   0,1,
-								   0,0,
-								   1,0,
-								   1,1,
-								   0,1};
-	model.sizeTexture = 16;
+	buildCubeDataInModel(model);
+
 	model.texture = new Texture("Textures/gray.png");
 	model.texture->load();
 	model.normalTexture = new Texture("Textures/grayNormal.png");
 	model.normalTexture->load();
-
-	model.normals = new float[24]{-1,-1,-1,
-								1,-1,-1,
-								1,1,-1,
-								-1,1,-1,
-								-1,-1,1,
-								1,-1,1,
-								1,1,1,
-								-1,1,1};
-	model.sizeNormals = 24;
-
-	model.ibo = new unsigned int[36]{0, 1, 2,    	// Face 1
-									0, 2, 3,     	// Face 1
-									5, 2, 1,		// Face 2
-									5, 6, 2,		// Face 2
-									4, 5, 1,		// Face 3
-									4, 1, 0,		// Face 3
-									4, 6, 5,		// Face 4
-									4, 7, 6,		// Face 4
-									0, 7, 4,		// Face 5
-									0, 3, 7,		// Face 5
-									7, 6, 2,		// Face 6
-									7, 2, 3};		// Face 6
-	model.sizeIbo = 36;
 
 	computeTangents(model);
 
@@ -227,4 +165,41 @@ void DrawableFactory::computeTangents(DrawableModel &model) {
 		model.bitangents[model.ibo[i+2]*3+1] += bitangent.y;
 		model.bitangents[model.ibo[i+2]*3+2] += bitangent.z;
     }
+}
+
+void DrawableFactory::buildCubeDataInModel(DrawableModel &model) {
+    model.textures = new float[16]{0,0,
+                                   1,0,
+                                   1,1,
+                                   0,1,
+                                   0,0,
+                                   1,0,
+                                   1,1,
+                                   0,1};
+    model.sizeTexture = 16;
+
+    model.normals = new float[24]{-1,-1,-1,
+                                1,-1,-1,
+                                1,1,-1,
+                                -1,1,-1,
+                                -1,-1,1,
+                                1,-1,1,
+                                1,1,1,
+                                -1,1,1};
+    model.sizeNormals = 24;
+
+
+    model.ibo = new unsigned int[36]{0, 2, 1,    	// Face 1
+                                    0, 3, 2,     	// Face 1
+                                    5, 1, 2,		// Face 2
+                                    5, 2, 6,		// Face 2
+                                    4, 1, 5,		// Face 3
+                                    4, 0, 1,		// Face 3
+                                    4, 5, 6,		// Face 4
+                                    4, 6, 7,		// Face 4
+                                    0, 4, 7,		// Face 5
+                                    0, 7, 3,		// Face 5
+                                    7, 6, 2,		// Face 6
+                                    7, 2, 3};		// Face 6
+    model.sizeIbo = 36;
 }
