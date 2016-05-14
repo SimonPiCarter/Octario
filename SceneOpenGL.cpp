@@ -161,7 +161,7 @@ void SceneOpenGL::bouclePrincipale()
 	Uint32 elapsed_time = 0;
 	Uint32 frame_count = 0;
 
-	//SDL_GL_SetSwapInterval(0);
+	SDL_GL_SetSwapInterval(0);
 
 	mainNode.rotate(vec3(0, 1, 0),25.05f);
 
