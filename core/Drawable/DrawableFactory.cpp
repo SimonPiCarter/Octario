@@ -1,82 +1,33 @@
 #include "DrawableFactory.h"
 
+#include <vector>
+
 using namespace glm;
-
-DrawableModel DrawableFactory::createCubeModel(float size, float r, float g, float b) {
-	return createCubeModel(size, vec3(r,g,b),vec3(r,g,b),vec3(r,g,b),vec3(r,g,b),vec3(r,g,b),vec3(r,g,b));
-}
-
-
-DrawableModel DrawableFactory::createCubeModel(float size, glm::vec3 color1, glm::vec3 color2, glm::vec3 color3, glm::vec3 color4,
-	glm::vec3 color5, glm::vec3 color6) {
-	size /= 2.f;
-	DrawableModel model;
-	// Vertices
-	model.vertices = new float[108]{-size, -size, -size,   size, -size, -size,   size, size, -size,     	   // Face 1
-						   -size, -size, -size,   size, size, -size,   -size, size, -size,     	// Face 1
-
-						   size, -size, size,   size, size, -size,   size, -size, -size,       // Face 2
-						   size, -size, size,   size, size, size,   size, size, -size,         // Face 2
-
-						   -size, -size, size,   size, -size, size,   size, -size, -size,      // Face 3
-						   -size, -size, size,   size, -size, -size,   -size, -size, -size,    // Face 3
-
-						   -size, -size, size,   size, size, size,   size, -size, size,        // Face 4
-						   -size, -size, size,   -size, size, size,   size, size, size,        // Face 4
-
-						   -size, -size, -size,   -size, size, size,   -size, -size, size,     // Face 5
-						   -size, -size, -size,   -size, size, -size,   -size, size, size,     // Face 5
-
-						   -size, size, size,   size, size, size,   size, size, -size,         // Face 6
-						   -size, size, size,   size, size, -size,   -size, size, -size};      // Face 6
-	model.sizeVertices = 108;
-	// Colors
-	model.colors = new float[108]{
-				color1.r,color1.g,color1.b, color1.r,color1.g,color1.b, color1.r,color1.g,color1.b,      		// Face 1
-				color1.r,color1.g,color1.b, color1.r,color1.g,color1.b, color1.r,color1.g,color1.b,            // Face 1
-
-				color2.r,color2.g,color2.b, color2.r,color2.g,color2.b, color2.r,color2.g,color2.b,            // Face 2
-				color2.r,color2.g,color2.b, color2.r,color2.g,color2.b, color2.r,color2.g,color2.b,            // Face 2
-
-				color3.r,color3.g,color3.b, color3.r,color3.g,color3.b, color3.r,color3.g,color3.b,            // Face 3
-				color3.r,color3.g,color3.b, color3.r,color3.g,color3.b, color3.r,color3.g,color3.b,            // Face 3
-
-				color4.r,color4.g,color4.b, color4.r,color4.g,color4.b, color4.r,color4.g,color4.b,            // Face 4
-				color4.r,color4.g,color4.b, color4.r,color4.g,color4.b, color4.r,color4.g,color4.b,            // Face 4
-
-				color5.r,color5.g,color5.b, color5.r,color5.g,color5.b, color5.r,color5.g,color5.b,            // Face 5
-				color5.r,color5.g,color5.b, color5.r,color5.g,color5.b, color5.r,color5.g,color5.b,            // Face 5
-
-				color6.r,color6.g,color6.b, color6.r,color6.g,color6.b, color6.r,color6.g,color6.b,            // Face 6
-				color6.r,color6.g,color6.b, color6.r,color6.g,color6.b, color6.r,color6.g,color6.b};           // Face 6
-	model.sizeColors = 108;
-
-	model.ibo = new unsigned int[36]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
-	20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35};
-	model.sizeIbo = 36;
-
-	return model;
-}
 
 DrawableModel DrawableFactory::createCubeSampleTextureModel(float size) {
 	size /= 2.f;
 	DrawableModel model;
 	// Vertices
-	model.vertices = new float[24]{-size, -size, -size,		// 0
-									size, -size, -size,		// 1
-									size, size, -size,		// 2
-									-size, size, -size,		// 3
-									-size, -size, size,		// 4
-									size, -size, size,		// 5
-									size, size, size,		// 6
-									-size, size, size};		// 7
-	model.sizeVertices = 24;
+	float* vertices_l = new float[144]{
+        -size, -size, -size,  size, size, -size,  size, -size, -size,       // Face 1
+        -size, -size, -size,   -size, size, -size,   size, size, -size,     // Face 1
+        size, -size, size,   size, -size, -size,   size, size, -size,       // Face 2
+        size, -size, size,   size, size, -size,  size, size, size,          // Face 2
+        -size, -size, size,  size, -size, -size,   size, -size, size,       // Face 3
+        -size, -size, size,  -size, -size, -size,  size, -size, -size,      // Face 3
+        -size, -size, size,  size, -size, size,  size, size, size,          // Face 4
+        -size, -size, size,  size, size, size,   -size, size, size,         // Face 4
+        -size, -size, -size,   -size, -size, size,   -size, size, size,     // Face 5
+        -size, -size, -size,   -size, size, size,  -size, size, -size,      // Face 5
+        -size, size, size,   size, size, size,   size, size, -size,         // Face 6
+        -size, size, size,   size, size, -size,  -size, size, -size         // Face 6
+    };
 
-	buildCubeDataInModel(model);
+	buildCubeDataInModel(vertices_l, model);
 
-	model.texture = new Texture("Textures/Caisse.jpg");
+	model.texture = new Texture("Textures/FullCaisse.jpg");
 	model.texture->load();
-	model.normalTexture = new Texture("Textures/CaisseNormal.jpg");
+	model.normalTexture = new Texture("Textures/FullCaisseNormal.jpg");
 	model.normalTexture->load();
 
 
@@ -88,18 +39,24 @@ DrawableModel DrawableFactory::createCubeSampleTextureModel(float size) {
 DrawableModel DrawableFactory::createPlaneModel(float width, float height, float thickness, float r, float g, float b) {
 	width /= 2;	height /= 2;	thickness /= 2;
 	DrawableModel model;
-	// Vertices
-	model.vertices = new float[24]{-width, -height, -thickness,		// 0
-									width, -height, -thickness,		// 1
-									width, height, -thickness,		// 2
-									-width, height, -thickness,		// 3
-									-width, -height, thickness,		// 4
-									width, -height, thickness,		// 5
-									width, height, thickness,		// 6
-									-width, height, thickness};		// 7
-	model.sizeVertices = 24;
 
-	buildCubeDataInModel(model);
+	// Vertices
+	float* vertices_l = new float[144]{
+        -width, -height, -thickness,  width, height, -thickness,  width, -height, -thickness,       // Face 1
+        -width, -height, -thickness,   -width, height, -thickness,   width, height, -thickness,     // Face 1
+        width, -height, thickness,   width, -height, -thickness,   width, height, -thickness,       // Face 2
+        width, -height, thickness,   width, height, -thickness,  width, height, thickness,          // Face 2
+        -width, -height, thickness,  width, -height, -thickness,   width, -height, thickness,       // Face 3
+        -width, -height, thickness,  -width, -height, -thickness,  width, -height, -thickness,      // Face 3
+        -width, -height, thickness,  width, -height, thickness,  width, height, thickness,          // Face 4
+        -width, -height, thickness,  width, height, thickness,   -width, height, thickness,         // Face 4
+        -width, -height, -thickness,   -width, -height, thickness,   -width, height, thickness,     // Face 5
+        -width, -height, -thickness,   -width, height, thickness,  -width, height, -thickness,      // Face 5
+        -width, height, thickness,   width, height, thickness,   width, height, -thickness,         // Face 6
+        -width, height, thickness,   width, height, -thickness,  -width, height, -thickness         // Face 6
+    };
+
+	buildCubeDataInModel(vertices_l,model);
 
 	model.texture = new Texture("Textures/gray.png");
 	model.texture->load();
@@ -167,39 +124,108 @@ void DrawableFactory::computeTangents(DrawableModel &model) {
     }
 }
 
-void DrawableFactory::buildCubeDataInModel(DrawableModel &model) {
-    model.textures = new float[16]{0,0,
-                                   1,0,
-                                   1,1,
-                                   0,1,
-                                   0,0,
-                                   1,0,
-                                   1,1,
-                                   0,1};
-    model.sizeTexture = 16;
-
-    model.normals = new float[24]{-1,-1,-1,
-                                1,-1,-1,
-                                1,1,-1,
-                                -1,1,-1,
-                                -1,-1,1,
-                                1,-1,1,
-                                1,1,1,
-                                -1,1,1};
-    model.sizeNormals = 24;
+void DrawableFactory::buildCubeDataInModel(float* vertices_p, DrawableModel &model) {
+    float* textures_l = new float[96]{
+        0,0.5,    1,0,    1,0.5,  // Face 1
+        0,0.5,    0,0,    1,0,    // Face 1
+        1,1,      0,1,    0,0.5,  // Face 2
+        1,1,      0,0.5,  1,0.5,  // Face 2
+        0,0.5,    1,1,    1,0.5,  // Face 3
+        0,0.5,    0,1,    1,0.5,  // Face 3
+        0,0.5,    1,0.5,  1,0,    // Face 4
+        0,0.5,    1,0,    0,0,    // Face 4
+        0,1,      1,1,    1,0.5,  // Face 5
+        0,1,      1,0.5,  0,0.5,  // Face 5
+        0,0.5,    1,0.5,  1,1,    // Face 6
+        0,0.5,    1,1,    0,1    // Face 6
+    };
 
 
-    model.ibo = new unsigned int[36]{0, 2, 1,    	// Face 1
-                                    0, 3, 2,     	// Face 1
-                                    5, 1, 2,		// Face 2
-                                    5, 2, 6,		// Face 2
-                                    4, 1, 5,		// Face 3
-                                    4, 0, 1,		// Face 3
-                                    4, 5, 6,		// Face 4
-                                    4, 6, 7,		// Face 4
-                                    0, 4, 7,		// Face 5
-                                    0, 7, 3,		// Face 5
-                                    7, 6, 2,		// Face 6
-                                    7, 2, 3};		// Face 6
-    model.sizeIbo = 36;
+    float* normals_l = new float[144]{
+        -1, -1, -1,  1, 1, -1,  1, -1, -1,       // Face 1
+        -1, -1, -1,   -1, 1, -1,   1, 1, -1,     // Face 1
+        1, -1, 1,   1, -1, -1,   1, 1, -1,       // Face 2
+        1, -1, 1,   1, 1, -1,  1, 1, 1,          // Face 2
+        -1, -1, 1,  1, -1, -1,   1, -1, 1,       // Face 3
+        -1, -1, 1,  -1, -1, -1,  1, -1, -1,      // Face 3
+        -1, -1, 1,  1, -1, 1,  1, 1, 1,          // Face 4
+        -1, -1, 1,  1, 1, 1,   -1, 1, 1,         // Face 4
+        -1, -1, -1,   -1, -1, 1,   -1, 1, 1,     // Face 5
+        -1, -1, -1,   -1, 1, 1,  -1, 1, -1,      // Face 5
+        -1, 1, 1,   1, 1, 1,   1, 1, -1,         // Face 6
+        -1, 1, 1,   1, 1, -1,  -1, 1, -1         // Face 6
+    };
+
+    factorizeDataInModel(48,vertices_p,normals_l,textures_l,model);
+}
+
+float* vec3ToFloatArray(std::vector<glm::vec3>& vector) {
+    float* array = new float[vector.size()*3];
+    for ( size_t i = 0 ; i < vector.size() ; ++ i ) {
+        array[i*3+0] = vector[i].x;
+        array[i*3+1] = vector[i].y;
+        array[i*3+2] = vector[i].z;
+    }
+    return array;
+}
+
+float* vec2ToFloatArray(std::vector<glm::vec2>& vector) {
+    float* array = new float[vector.size()*2];
+    for ( size_t i = 0 ; i < vector.size() ; ++ i ) {
+        array[i*2+0] = vector[i].x;
+        array[i*2+1] = vector[i].y;
+    }
+    return array;
+}
+
+unsigned int* vecToIntArray(std::vector<unsigned int>& vector) {
+    unsigned int* array = new unsigned int[vector.size()];
+    for ( size_t i = 0 ; i < vector.size() ; ++ i ) {
+        array[i] = vector[i];
+    }
+    return array;
+}
+
+void DrawableFactory::factorizeDataInModel(size_t size, float* vertices_p, float* normals_p, float* textures_p, DrawableModel &model) {
+
+    std::vector<glm::vec3> vertices_l;
+    std::vector<glm::vec3> normals_l;
+    std::vector<glm::vec2> textures_l;
+    std::vector<unsigned int> ibo_l;
+
+    for ( size_t i = 0 ; i < size ; ++ i ) {
+        bool found_l = false;
+        glm::vec3 vertex(vertices_p[i*3+0],vertices_p[i*3+1],vertices_p[i*3+2]);
+        glm::vec3 normal(normals_p[i*3+0],normals_p[i*3+1],normals_p[i*3+2]);
+        glm::vec2 texture(textures_p[i*2+0],textures_p[i*2+1]);
+
+        for ( size_t j = 0 ; j < vertices_l.size() ; ++ j ) {
+            if ( vertices_l[j] == vertex && normals_l[j] == normal && textures_l[j] == texture ) {
+                found_l = true;
+                ibo_l.push_back(j);
+            }
+        }
+        // If vertices did not existed before we create it
+        if ( !found_l ) {
+            ibo_l.push_back(vertices_l.size());
+            vertices_l.push_back(vertex);
+            normals_l.push_back(normal);
+            textures_l.push_back(texture);
+        }
+    }
+
+    // Build final data
+	// Vertices
+	model.sizeVertices = vertices_l.size()*3;
+	model.vertices = vec3ToFloatArray(vertices_l);
+
+    model.sizeTexture = textures_l.size()*2;
+    model.textures = vec2ToFloatArray(textures_l);
+
+    model.sizeNormals = normals_l.size()*3;
+    model.normals = vec3ToFloatArray(normals_l);
+
+
+    model.sizeIbo = ibo_l.size();
+    model.ibo = vecToIntArray(ibo_l);
 }

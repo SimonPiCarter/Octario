@@ -10,14 +10,6 @@ class DrawableFactory : public Singleton<DrawableFactory>
 	friend class Singleton<DrawableFactory>;
 
 	public:
-		DrawableModel createCubeModel(float size, float r, float g, float b);
-		DrawableModel createCubeModel(float size, glm::vec3 color1,
-											glm::vec3 color2,
-											glm::vec3 color3,
-											glm::vec3 color4,
-											glm::vec3 color5,
-											glm::vec3 color6);
-
 		DrawableModel createCubeSampleTextureModel(float size);
 
 		DrawableModel createPlaneModel(float width, float height, float thickness, float r, float g, float b);
@@ -28,5 +20,7 @@ class DrawableFactory : public Singleton<DrawableFactory>
 	private:
 		void computeTangents(DrawableModel &model);
 
-		void buildCubeDataInModel(DrawableModel &model);
+		void buildCubeDataInModel(float* vertices_p, DrawableModel &model);
+
+		void factorizeDataInModel(size_t size, float* vertices_p, float* normals_p, float* textures_p, DrawableModel &model);
 };
