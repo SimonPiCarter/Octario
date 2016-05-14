@@ -1,6 +1,13 @@
 #include "FrameBufferObject.h"
 
-FrameBufferObject::FrameBufferObject() : m_fbo(0),m_shadowMap(0),m_depth(0)
+#include "../Light/Light.h"
+#include "../Node/Node.h"
+#include "../Shader/ShadowMapShader.h"
+
+#include <vector>
+#include <iostream>
+
+FrameBufferObject::FrameBufferObject() : m_fbo(0),m_shadowMap(0), m_shadowMapShader(new ShadowMapShader())
 {
 }
 
@@ -14,60 +21,73 @@ FrameBufferObject::~FrameBufferObject()
         glDeleteTextures(1, &m_shadowMap);
     }
 
-    if (m_depth != 0) {
-        glDeleteTextures(1, &m_depth);
-    }
+    delete m_shadowMapShader;
 }
 
-bool FrameBufferObject::init(unsigned int WindowWidth, unsigned int WindowHeight)
+bool FrameBufferObject::init(unsigned int textureSize)
 {
+	m_shadowMapShader->load();
+
+    m_textureSize = textureSize;
     // Create the FBO
     glGenFramebuffers(1, &m_fbo);
-
-    // Create the depth buffer
-    glGenTextures(1, &m_depth);
-    glBindTexture(GL_TEXTURE_2D, m_depth);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, WindowWidth, WindowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Create the cube map
 	glGenTextures(1, &m_shadowMap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_shadowMap);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
 
-    for (unsigned int i = 0 ; i < 6 ; i++) {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_R32F, WindowWidth, WindowHeight, 0, GL_RED, GL_FLOAT, NULL);
+    for (glm::uint i = 0 ; i < 6 ; i++) {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_R32F, textureSize, textureSize, 0, GL_RED, GL_FLOAT, NULL);
     }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depth, 0);
-
-    // Disable writes to the color buffer
-    glDrawBuffer(GL_NONE);
-
-    // Disable reads from the color buffer
-    glReadBuffer(GL_NONE);
 
     GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
     if (Status != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout<<"FB error, status: "<<Status<<std::endl;
         return false;
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    int glError = glGetError();
+    if ( glError != GL_NO_ERROR ) {
+        std::cout<<"GL error, status: "<<glError<<std::endl;
+        return false;
+    }
 
-    return true;
+    return true ;
 }
 
+void FrameBufferObject::shadowPass(Light &light, Node& mainNode, const glm::mat4& projection) {
+    glCullFace(GL_FRONT);
 
+    glm::mat4 view;
+    glm::vec4 lightPos4 = light.getPosition();
+    glm::vec3 lightPos3(lightPos4.x,lightPos4.y,lightPos4.z);
+
+    glUseProgram(m_shadowMapShader->getProgramID());
+
+    glUniform3f(glGetUniformLocation(m_shadowMapShader->getProgramID(), "lightPos"), lightPos4.x,lightPos4.y,lightPos4.z);
+
+    glViewport(0,0,m_textureSize,m_textureSize);
+
+    // Clear screen
+    glClearColor(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
+
+    for (size_t i = 0 ; i < CameraDirection::NUM_OF_LAYERS ; ++i) {
+        bindForWriting(cameraDirection[i].CubemapFace);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+        view = glm::lookAt(lightPos3, lightPos3+cameraDirection[i].Target, cameraDirection[i].Up);
+
+        mainNode.draw(view, glm::mat4(1), projection, *m_shadowMapShader);
+    }
+}
 
 void FrameBufferObject::bindForWriting(GLenum CubeFace)
 {

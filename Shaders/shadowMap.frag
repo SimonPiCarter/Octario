@@ -10,7 +10,7 @@ void main()
 {
     vec3 LightToVertex = pos_world - lightPos;
 
-    float LightToPixelDistance = dot(LightToVertex,LightToVertex);
+    float LightToPixelDistance = length(LightToVertex);
 
     out_Color = LightToPixelDistance;
 }

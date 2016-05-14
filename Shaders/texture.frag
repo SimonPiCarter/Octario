@@ -1,6 +1,6 @@
 // Version du GLSL
 
-#version 330 core
+#version 330
 
 
 // Entrée
@@ -15,38 +15,39 @@ in vec3 bitangent;
 
 uniform sampler2D colorTexture;
 uniform sampler2D normalTexture;
+uniform samplerCube shadowMap;
 uniform mat4 model;
 uniform mat4 view;
 uniform vec4 pointLightPos[16];
 uniform vec4 pointLightProp[16];
 uniform int pointLightCount;
-uniform samplerCube shadowMap;
 
 // Sortie 
 
 out vec4 out_Color;
 
-#define EPSILON 0.00001
+#define EPSILON 0.5
 
 float calcShadowFactor(vec3 lightToFrag)
 {
     float sampledDistance = texture(shadowMap, lightToFrag).r;
 
-    float distance = dot(lightToFrag,lightToFrag);
+    float distance = length(lightToFrag);
 
     if (distance <= sampledDistance + EPSILON)
         return 1.0;
     else
-        return 0.5;
+        return 0.0;
 }
 
 vec3 computeColor() {
-	vec3 coord = texture( normalTexture, coordTexture ).rgb*2.0 - 1.0;
+	vec3 coord = vec3(0,0,1);//texture( normalTexture, coordTexture ).rgb*2.0 - 1.0;
 	// Normal of the computed fragment, in camera space
 	vec3 n = normalize(coord.r*tangent + coord.g*bitangent + coord.b*normal);
 	
 	// Ambient : simulates indirect lighting
-	vec3 color = texture(colorTexture, coordTexture).rgb;
+	vec3 color = texture( colorTexture, coordTexture ).rgb;
+	//vec3 color = texture( shadowMap, pos_world - pointLightPos[0].xyz ).rgb;
 	vec3 finalColor = 0.4*color;
 
 	// Diffuse : "color" of the object
@@ -69,7 +70,7 @@ vec3 computeColor() {
 			shadowFactor = calcShadowFactor(lightDir);
 		}
 
-		finalColor += shadowFactor * color * pointLightProp[i].xyz * pointLightProp[i].w * cosTheta / (distance*distance);
+		finalColor += shadowFactor * color * pointLightProp[i].rgb * pointLightProp[i].w * cosTheta / (distance*distance);
 	}
 
 	return finalColor;

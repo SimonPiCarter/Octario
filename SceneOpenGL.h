@@ -42,6 +42,5 @@ class SceneOpenGL
     SDL_Event m_evenements;
 
 	Shader shader;
-	ShadowMapShader shadowMapShader;
 	FrameBufferObject fbo;
 };
