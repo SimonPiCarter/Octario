@@ -46,9 +46,28 @@ bool FrameBufferObject::init(unsigned int textureSize)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
 
+    // Create the depth buffer
+    glGenTextures(1, &m_depth);
+    glBindTexture(GL_TEXTURE_2D, m_depth);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, textureSize, textureSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     for (glm::uint i = 0 ; i < 6 ; i++) {
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_R32F, textureSize, textureSize, 0, GL_RED, GL_FLOAT, NULL);
     }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depth, 0);
+
+    // Disable writes to the color buffer
+    glDrawBuffer(GL_NONE);
+
+    // Disable reads from the color buffer
+    glReadBuffer(GL_NONE);
 
     GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
@@ -84,7 +103,7 @@ void FrameBufferObject::shadowPass(Light &light, Node& mainNode, const glm::mat4
 
     for (size_t i = 0 ; i < CameraDirection::NUM_OF_LAYERS ; ++i) {
         bindForWriting(cameraDirection[i].CubemapFace);
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         view = glm::lookAt(lightPos3, lightPos3+cameraDirection[i].Target, cameraDirection[i].Up);
 
@@ -130,7 +149,7 @@ void FrameBufferObject::debugMode(Light &light, Node& mainNode, const glm::mat4&
     glClearColor(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
 
     for (size_t i = 0 ; i < CameraDirection::NUM_OF_LAYERS ; ++i) {
-        glViewport(x+width*(i%3),y+height/3,width,height);
+        glViewport(x+width*(i%3),y+height*(i/3),width,height);
         //glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         view = glm::lookAt(lightPos3, lightPos3+cameraDirection[i].Target, cameraDirection[i].Up);

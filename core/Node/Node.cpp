@@ -40,7 +40,9 @@ Drawable* Node::detachDrawable(std::string name) {
 void Node::draw(const glm::mat4& view, glm::mat4 modelMat, const glm::mat4& projection, const Shader& shader) {
     modelMat *= transformation;
 
-	glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "mvp"), 1, GL_FALSE, value_ptr(projection*view*modelMat));
+    mat4 mvp = projection*view*modelMat;
+
+	glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "mvp"), 1, GL_FALSE, value_ptr(mvp));
 	glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "model"), 1, GL_FALSE, value_ptr(modelMat));
 
 	// Draw all drawables

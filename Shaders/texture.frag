@@ -26,7 +26,7 @@ uniform int pointLightCount;
 
 out vec4 out_Color;
 
-#define EPSILON 0.5
+#define EPSILON 0.001
 
 float calcShadowFactor(vec3 lightToFrag)
 {

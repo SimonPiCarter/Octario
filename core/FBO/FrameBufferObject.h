@@ -46,6 +46,7 @@ class FrameBufferObject
     private:
         unsigned int m_textureSize;
         GLuint m_fbo;
+        GLuint m_depth;
         GLuint m_shadowMap;
 
         ShadowMapShader* m_shadowMapShader;

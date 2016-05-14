@@ -106,7 +106,7 @@ void SceneOpenGL::bouclePrincipale()
 {
     // Variables
 
-    bool terminer(false);
+    bool over(false);
     float taille = 1.f;
     // Division du paramètre taille
 	taille /= 2.f;
@@ -122,8 +122,13 @@ void SceneOpenGL::bouclePrincipale()
 	plane.load();
 
 	Node mainNode;
-	mainNode.addDrawable("cube",&cube);
-	mainNode.addDrawable("plane",&plane);
+	//mainNode.addDrawable("plane",&plane);
+	//mainNode.addDrawable("cube",&cube);
+
+	Node subNode2;
+	subNode2.addDrawable("cube",&cube);
+	subNode2.addDrawable("plane",&plane);
+	mainNode.addSubNode("subNode2",&subNode2);
 
 	Node subNode;
 	subNode.addDrawable("cube",&cube);
@@ -145,10 +150,10 @@ void SceneOpenGL::bouclePrincipale()
     mat4 projection;
     mat4 shadowMapProjection;
     mat4 view;
+    vec3 camPos = vec3(1,1,1);
 
     projection = perspective(70.0, (double) m_largeurFenetre / m_hauteurFenetre, 0.1, 100.0);
     shadowMapProjection = perspective(90.0, 1.0, 0.1, 100.0);
-    view = lookAt(vec3(5, 5, 5), vec3(0, 0, 0), vec3(0, 1, 0));
 
     fbo.init(2048);
 
@@ -156,12 +161,12 @@ void SceneOpenGL::bouclePrincipale()
 	Uint32 elapsed_time = 0;
 	Uint32 frame_count = 0;
 
-	SDL_GL_SetSwapInterval(0);
+	//SDL_GL_SetSwapInterval(0);
 
-	mainNode.rotate(vec3(0, 1, 0),45.05f);
+	mainNode.rotate(vec3(0, 1, 0),25.05f);
 
     // Boucle principale
-    while(!terminer)
+    while(!over)
     {
 
 		elapsed_time = SDL_GetTicks()-start_time;
@@ -177,11 +182,40 @@ void SceneOpenGL::bouclePrincipale()
 			start_time = SDL_GetTicks();
 			frame_count = 0;
 		}
-        // Gestion des evenements
-        SDL_PollEvent(&m_evenements);
 
-        if(m_evenements.window.event == SDL_WINDOWEVENT_CLOSE)
-            terminer = true;
+        // Gestion des evenements
+        while (SDL_PollEvent(&m_evenements)){
+            //If user closes the window
+            if (m_evenements.type == SDL_QUIT){
+                over = true;
+            }
+            if(m_evenements.window.event == SDL_WINDOWEVENT_CLOSE) {
+                over = true;
+            }
+            if (m_evenements.type == SDL_KEYDOWN ) {
+                if ( m_evenements.key.keysym.sym == SDLK_UP || m_evenements.key.keysym.sym == SDLK_z ) {
+                    light.translate(0,0.2,0);
+                    LightManager::get().updatePointLightArray();
+                    //camPos+= vec3(0,0.1,0);
+                } else if ( m_evenements.key.keysym.sym == SDLK_DOWN || m_evenements.key.keysym.sym == SDLK_s ) {
+                    light.translate(0,-0.2,0);
+                    LightManager::get().updatePointLightArray();
+                    //camPos+= vec3(0,-0.1,0);
+                } else if ( m_evenements.key.keysym.sym == SDLK_RIGHT || m_evenements.key.keysym.sym == SDLK_d ) {
+                    light.translate(0.2,0,0);
+                    LightManager::get().updatePointLightArray();
+                    //camPos+= vec3(0.1,0,0);
+                } else if ( m_evenements.key.keysym.sym == SDLK_LEFT || m_evenements.key.keysym.sym == SDLK_q ) {
+                    light.translate(-0.2,0,0);
+                    LightManager::get().updatePointLightArray();
+                    //camPos+= vec3(-0.1,0,0);
+                } else if ( m_evenements.key.keysym.sym == SDLK_ESCAPE ) {
+                    over = true;
+                }
+            }
+        }
+
+        view = lookAt(vec3(5,5,5)+camPos, camPos, vec3(0, 1, 0));
 
         // Rotation du repere
         mainNode.rotate(vec3(0, 1, 0),0.05f);
@@ -189,6 +223,8 @@ void SceneOpenGL::bouclePrincipale()
         fbo.shadowPass(light,mainNode,shadowMapProjection);
 
         displayPass(mainNode,view,projection);
+
+        //fbo.debugMode(light,mainNode,shadowMapProjection,0,0,256,256,shader);
 
         // display swap buffer
         SDL_GL_SwapWindow(m_fenetre);
