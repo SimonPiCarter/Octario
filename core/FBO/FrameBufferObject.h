@@ -7,6 +7,7 @@
 class Node;
 class Light;
 class ShadowMapShader;
+class Shader;
 
 struct CameraDirection
 {
@@ -39,6 +40,8 @@ class FrameBufferObject
         void bindForReading(GLenum TextureUnit);
 
         void shadowPass(Light &light, Node& mainNode, const glm::mat4& projection);
+
+        void debugMode(Light &light, Node& mainNode, const glm::mat4& projection, int x, int y, int width, int height, Shader& shader);
 
     private:
         unsigned int m_textureSize;

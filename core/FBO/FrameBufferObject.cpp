@@ -1,11 +1,14 @@
 #include "FrameBufferObject.h"
 
 #include "../Light/Light.h"
+#include "../Light/LightManager.h"
 #include "../Node/Node.h"
 #include "../Shader/ShadowMapShader.h"
+#include "../Shader/Shader.h"
 
 #include <vector>
 #include <iostream>
+#include <glm/gtc/type_ptr.hpp>
 
 FrameBufferObject::FrameBufferObject() : m_fbo(0),m_shadowMap(0), m_shadowMapShader(new ShadowMapShader())
 {
@@ -101,4 +104,39 @@ void FrameBufferObject::bindForReading(GLenum TextureUnit)
 {
     glActiveTexture(TextureUnit);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_shadowMap);
+}
+
+void FrameBufferObject::debugMode(Light &light, Node& mainNode, const glm::mat4& projection, int x, int y, int width, int height, Shader& shader) {
+    glCullFace(GL_FRONT);
+
+    glm::mat4 view;
+    glm::vec4 lightPos4 = light.getPosition();
+    glm::vec3 lightPos3(lightPos4.x,lightPos4.y,lightPos4.z);
+
+    glUseProgram(shader.getProgramID());
+
+    glUniform4fv(glGetUniformLocation(shader.getProgramID(), "pointLightPos"),
+                LightManager::get().getPointLightCount(),
+                LightManager::get().getPointLightsPos());
+    glUniform4fv(glGetUniformLocation(shader.getProgramID(), "pointLightProp"),
+                LightManager::get().getPointLightCount(),
+                LightManager::get().getPointLightsProp());
+    glUniform1i(glGetUniformLocation(shader.getProgramID(), "pointLightCount"),
+                LightManager::get().getPointLightCount());
+
+    glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+    // Clear screen
+    glClearColor(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
+
+    for (size_t i = 0 ; i < CameraDirection::NUM_OF_LAYERS ; ++i) {
+        glViewport(x+width*(i%3),y+height/3,width,height);
+        //glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+        view = glm::lookAt(lightPos3, lightPos3+cameraDirection[i].Target, cameraDirection[i].Up);
+
+        glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+
+        mainNode.draw(view, glm::mat4(1), projection, shader);
+    }
 }
