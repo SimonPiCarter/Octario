@@ -5,9 +5,9 @@ using namespace glm;
 
 DebugDrawable::DebugDrawable(DrawableModel* inModel) :
 	model(inModel),
-	sizeOfVerticesBytes(inModel->sizeVertices*sizeof(float)*6),
-	sizeOfColorsBytes(inModel->sizeVertices*sizeof(float)*6),
-	sizeOfIboBytes(inModel->sizeVertices*sizeof(unsigned int)*6),
+	sizeOfVerticesBytes(0),
+	sizeOfColorsBytes(0),
+	sizeOfIboBytes(0),
 	vboId(0),
 	iboId(0) {
 }
@@ -20,10 +20,13 @@ bool DebugDrawable::load() {
 	clear();
 
 	// build data
-    m_vertices = new float[model->sizeVertices*6*3];
-    m_colors = new float[model->sizeVertices*6*3];
-    m_ibos = new float[model->sizeVertices*6];
-    m_sizeIbo = model->sizeVertices*6;
+    m_vertices = new float[model->sizeVertices*6];
+    m_colors = new float[model->sizeVertices*6];
+    m_ibos = new unsigned int[model->sizeVertices*3];
+    m_sizeIbo = model->sizeVertices*3;
+    sizeOfVerticesBytes = model->sizeVertices*6*sizeof(float);
+    sizeOfColorsBytes = model->sizeVertices*6*sizeof(float);
+    sizeOfIboBytes = model->sizeVertices*3*sizeof(unsigned int);
     size_t index = 0;
     size_t ibo_index = 0;
     // for each vertex
@@ -36,9 +39,11 @@ bool DebugDrawable::load() {
         m_vertices[index++] = model->vertices[i*3+2];
         m_ibos[ibo_index] = ibo_index;        ++ibo_index;
         m_colors[index] = 0.f;        m_colors[index+1] = 0.f;        m_colors[index+2] = 1.f;
-        m_vertices[index++] = model->vertices[i*3+0]+model->normals[i*3+0];
-        m_vertices[index++] = model->vertices[i*3+1]+model->normals[i*3+1];
-        m_vertices[index++] = model->vertices[i*3+2]+model->normals[i*3+2];
+        glm::vec3 tmp_l(model->normals[i*3+0],model->normals[i*3+1],model->normals[i*3+2]);
+        tmp_l = glm::normalize(tmp_l);
+        m_vertices[index++] = model->vertices[i*3+0]+tmp_l.x;
+        m_vertices[index++] = model->vertices[i*3+1]+tmp_l.y;
+        m_vertices[index++] = model->vertices[i*3+2]+tmp_l.z;
 
         // Build line for tangent
         m_ibos[ibo_index] = ibo_index;        ++ibo_index;
@@ -48,9 +53,11 @@ bool DebugDrawable::load() {
         m_vertices[index++] = model->vertices[i*3+2];
         m_ibos[ibo_index] = ibo_index;        ++ibo_index;
         m_colors[index] = 1.f;        m_colors[index+1] = 0.f;        m_colors[index+2] = 0.f;
-        m_vertices[index++] = model->vertices[i*3+0]+model->tangents[i*3+0];
-        m_vertices[index++] = model->vertices[i*3+1]+model->tangents[i*3+1];
-        m_vertices[index++] = model->vertices[i*3+2]+model->tangents[i*3+2];
+        tmp_l = glm::vec3(model->tangents[i*3+0],model->tangents[i*3+1],model->tangents[i*3+2]);
+        tmp_l = glm::normalize(tmp_l);
+        m_vertices[index++] = model->vertices[i*3+0]+tmp_l.x;
+        m_vertices[index++] = model->vertices[i*3+1]+tmp_l.y;
+        m_vertices[index++] = model->vertices[i*3+2]+tmp_l.z;
 
         // Build line for bitangent
         m_ibos[ibo_index] = ibo_index;        ++ibo_index;
@@ -60,9 +67,11 @@ bool DebugDrawable::load() {
         m_vertices[index++] = model->vertices[i*3+2];
         m_ibos[ibo_index] = ibo_index;        ++ibo_index;
         m_colors[index] = 0.f;        m_colors[index+1] = 1.f;        m_colors[index+2] = 0.f;
-        m_vertices[index++] = model->vertices[i*3+0]+model->bitangents[i*3+0];
-        m_vertices[index++] = model->vertices[i*3+1]+model->bitangents[i*3+1];
-        m_vertices[index++] = model->vertices[i*3+2]+model->bitangents[i*3+2];
+        tmp_l = glm::vec3(model->bitangents[i*3+0],model->bitangents[i*3+1],model->bitangents[i*3+2]);
+        tmp_l = glm::normalize(tmp_l);
+        m_vertices[index++] = model->vertices[i*3+0]+tmp_l.x;
+        m_vertices[index++] = model->vertices[i*3+1]+tmp_l.y;
+        m_vertices[index++] = model->vertices[i*3+2]+tmp_l.z;
     }
 
 	glGenBuffers(1,&vboId);

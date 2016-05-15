@@ -12,7 +12,7 @@ DrawableModel DrawableFactory::createCubeSampleTextureModel(float size, std::str
     size /= 2.f;
 	DrawableModel model;
 	// Vertices
-	float* vertices_l = new float[144]{
+	float* vertices_l = new float[108]{
         -size, -size, -size,  size, size, -size,  size, -size, -size,       // Face 1
         -size, -size, -size,   -size, size, -size,   size, size, -size,     // Face 1
         size, -size, size,   size, -size, -size,   size, size, -size,       // Face 2
@@ -46,7 +46,7 @@ DrawableModel DrawableFactory::createPlaneModel(float width, float height, float
 	DrawableModel model;
 
 	// Vertices
-	float* vertices_l = new float[144]{
+	float* vertices_l = new float[108]{
         -width, -height, -thickness,  width, height, -thickness,  width, -height, -thickness,       // Face 1
         -width, -height, -thickness,   -width, height, -thickness,   width, height, -thickness,     // Face 1
         width, -height, thickness,   width, -height, -thickness,   width, height, -thickness,       // Face 2
@@ -84,14 +84,14 @@ void DrawableFactory::computeTangents(DrawableModel &model) {
     for ( int i=0; i<model.sizeIbo; i+=3){
 
         // Shortcuts for vertices
-        glm::vec3 v0 = glm::vec3(model.vertices[model.ibo[i]*3],model.vertices[model.ibo[i]*3+1],model.vertices[model.ibo[i]*3+2]);
-        glm::vec3 v1 = glm::vec3(model.vertices[model.ibo[i+1]*3],model.vertices[model.ibo[i+1]*3+1],model.vertices[model.ibo[i+1]*3+2]);
-        glm::vec3 v2 = glm::vec3(model.vertices[model.ibo[i+2]*3],model.vertices[model.ibo[i+2]*3+1],model.vertices[model.ibo[i+2]*3+2]);
+        glm::vec3 v0 = glm::vec3(model.vertices[model.ibo[i+0]*3+0],model.vertices[model.ibo[i+0]*3+1],model.vertices[model.ibo[i+0]*3+2]);
+        glm::vec3 v1 = glm::vec3(model.vertices[model.ibo[i+1]*3+0],model.vertices[model.ibo[i+1]*3+1],model.vertices[model.ibo[i+1]*3+2]);
+        glm::vec3 v2 = glm::vec3(model.vertices[model.ibo[i+2+0]*3],model.vertices[model.ibo[i+2]*3+1],model.vertices[model.ibo[i+2]*3+2]);
 
         // Shortcuts for UVs
-        glm::vec2 uv0 = glm::vec2(model.textures[model.ibo[i]*3],model.textures[model.ibo[i]*3+1]);
-        glm::vec2 uv1 = glm::vec2(model.textures[model.ibo[i+1]*3],model.textures[model.ibo[i+1]*3+1]);
-        glm::vec2 uv2 = glm::vec2(model.textures[model.ibo[i+2]*3],model.textures[model.ibo[i+2]*3+1]);
+        glm::vec2 uv0 = glm::vec2(model.textures[model.ibo[i+0]*2+0],model.textures[model.ibo[i+0]*2+1]);
+        glm::vec2 uv1 = glm::vec2(model.textures[model.ibo[i+1]*2+0],model.textures[model.ibo[i+1]*2+1]);
+        glm::vec2 uv2 = glm::vec2(model.textures[model.ibo[i+2]*2+0],model.textures[model.ibo[i+2]*2+1]);
 
         // Edges of the triangle : postion delta
         glm::vec3 deltaPos1 = v1-v0;
@@ -131,7 +131,7 @@ void DrawableFactory::computeTangents(DrawableModel &model) {
 }
 
 void DrawableFactory::buildCubeDataInModel(float* vertices_p, DrawableModel &model) {
-    float* textures_l = new float[96]{
+    float* textures_l = new float[72]{
         0,0.5,    1,0,    1,0.5,  // Face 1
         0,0.5,    0,0,    1,0,    // Face 1
         1,1,      0,1,    0,0.5,  // Face 2
@@ -147,7 +147,7 @@ void DrawableFactory::buildCubeDataInModel(float* vertices_p, DrawableModel &mod
     };
 
 
-    float* normals_l = new float[144]{
+    float* normals_l = new float[108]{
         -1, -1, -1,  1, 1, -1,  1, -1, -1,       // Face 1
         -1, -1, -1,   -1, 1, -1,   1, 1, -1,     // Face 1
         1, -1, 1,   1, -1, -1,   1, 1, -1,       // Face 2
@@ -162,7 +162,7 @@ void DrawableFactory::buildCubeDataInModel(float* vertices_p, DrawableModel &mod
         -1, 1, 1,   1, 1, -1,  -1, 1, -1         // Face 6
     };
 
-    factorizeDataInModel(48,vertices_p,normals_l,textures_l,model);
+    factorizeDataInModel(36,vertices_p,normals_l,textures_l,model);
 }
 
 void DrawableFactory::loadTextures(std::string texture_p, std::string normalTexture_p, std::string bumpTexture_p, DrawableModel &model) {

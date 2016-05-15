@@ -77,6 +77,6 @@ void Node::drawDebug(const glm::mat4& view, glm::mat4 modelMat, const glm::mat4&
 
 	// Draw all sub nodes
 	for ( std::map<std::string,Node*>::iterator it = subNodes.begin(); it!=subNodes.end(); ++it ) {
-		it->second->draw(view,modelMat,projection,shader);
+		it->second->drawDebug(view,modelMat,projection,shader);
 	}
 }

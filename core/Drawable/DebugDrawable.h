@@ -27,7 +27,7 @@ class DebugDrawable
 
 		float* m_vertices;
 		float* m_colors;
-		float* m_ibos;
+		unsigned int* m_ibos;
 		size_t m_sizeIbo;
 
 		int sizeOfVerticesBytes;

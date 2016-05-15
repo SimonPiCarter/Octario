@@ -4,7 +4,7 @@
 
 
 // Input
-in vec2 in_Vertex;
+in vec3 in_Vertex;
 in vec3 in_Color;
 
 // Uniform
