@@ -16,8 +16,6 @@ in vec3 bitangent;
 uniform sampler2D colorTexture;
 uniform sampler2D normalTexture;
 uniform samplerCube shadowMap;
-uniform mat4 model;
-uniform mat4 view;
 uniform vec4 pointLightPos[16];
 uniform vec4 pointLightProp[16];
 uniform int pointLightCount;
