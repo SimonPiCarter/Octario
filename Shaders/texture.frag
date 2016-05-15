@@ -20,6 +20,7 @@ uniform sampler2D normalTexture;
 uniform int enableBumpMapping;
 uniform sampler2D bumpTexture;
 uniform samplerCube shadowMap;
+uniform samplerCube shadowMap2;
 uniform vec4 pointLightPos[16];
 uniform vec4 pointLightProp[16];
 uniform int pointLightCount;
@@ -30,9 +31,9 @@ out vec4 out_Color;
 
 #define EPSILON 0.001
 
-float calcShadowFactor(vec3 lightToFrag)
+float calcShadowFactor(vec3 lightToFrag, samplerCube shadowMap_p)
 {
-    float sampledDistance = texture(shadowMap, lightToFrag).r;
+    float sampledDistance = texture(shadowMap_p, lightToFrag).r;
 
     float distance = length(lightToFrag);
 
@@ -91,7 +92,10 @@ vec3 computeColor() {
 		float shadowFactor = 1.0;
 		if ( i == 0 ) {
 			vec3 lightDir = pos_world - pointLightPos[i].xyz;
-			shadowFactor = calcShadowFactor(lightDir);
+			shadowFactor = calcShadowFactor(lightDir, shadowMap);
+		} else if ( i == 1 ) {
+			vec3 lightDir = pos_world - pointLightPos[i].xyz;
+			shadowFactor = calcShadowFactor(lightDir, shadowMap2);
 		}
 
 		finalColor += shadowFactor * color * pointLightProp[i].rgb * pointLightProp[i].w * cosTheta / (distance*distance);

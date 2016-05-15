@@ -10,8 +10,12 @@
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 
-FrameBufferObject::FrameBufferObject() : m_fbo(0),m_shadowMap(0), m_shadowMapShader(new ShadowMapShader())
+FrameBufferObject::FrameBufferObject(size_t size_p, size_t textureSize_p) : m_nbTexture(size_p), m_textureSize(textureSize_p), m_fbo(0),m_shadowMap(0), m_shadowMapShader(new ShadowMapShader())
 {
+    m_shadowMap = new GLuint[m_nbTexture];
+    for ( size_t i = 0 ; i < m_nbTexture ; ++ i ) {
+        m_shadowMap[i] = 0;
+    }
 }
 
 FrameBufferObject::~FrameBufferObject()
@@ -20,45 +24,32 @@ FrameBufferObject::~FrameBufferObject()
         glDeleteFramebuffers(1, &m_fbo);
     }
 
-    if (m_shadowMap != 0) {
-        glDeleteTextures(1, &m_shadowMap);
+    if (m_shadowMap != NULL) {
+
+        for ( size_t i = 0 ; i < m_nbTexture ; ++ i ) {
+            if ( m_shadowMap[i] != 0 ) {
+                glDeleteTextures(1, &m_shadowMap[i]);
+            }
+        }
     }
 
     delete m_shadowMapShader;
 }
 
-bool FrameBufferObject::init(unsigned int textureSize)
-{
-	m_shadowMapShader->load();
-
-    m_textureSize = textureSize;
+bool FrameBufferObject::init() {
+    m_shadowMapShader->load();
     // Create the FBO
     glGenFramebuffers(1, &m_fbo);
-
-	// Create the cube map
-	glGenTextures(1, &m_shadowMap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_shadowMap);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
 
     // Create the depth buffer
     glGenTextures(1, &m_depth);
     glBindTexture(GL_TEXTURE_2D, m_depth);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, textureSize, textureSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, m_textureSize, m_textureSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    for (glm::uint i = 0 ; i < 6 ; i++) {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_R32F, textureSize, textureSize, 0, GL_RED, GL_FLOAT, NULL);
-    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depth, 0);
@@ -85,7 +76,33 @@ bool FrameBufferObject::init(unsigned int textureSize)
     return true ;
 }
 
-void FrameBufferObject::shadowPass(Light &light, Node& mainNode, const glm::mat4& projection) {
+bool FrameBufferObject::init(size_t textureId_p)
+{
+	// Create the cube map
+	glGenTextures(1, &m_shadowMap[textureId_p]);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_shadowMap[textureId_p]);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
+
+    for (glm::uint i = 0 ; i < 6 ; i++) {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_R32F, m_textureSize, m_textureSize, 0, GL_RED, GL_FLOAT, NULL);
+    }
+
+    int glError = glGetError();
+    if ( glError != GL_NO_ERROR ) {
+        std::cout<<"GL error, status: "<<glError<<std::endl;
+        return false;
+    }
+
+    return true ;
+}
+
+void FrameBufferObject::shadowPass(size_t textureId_p, Light &light, Node& mainNode, const glm::mat4& projection) {
     glCullFace(GL_FRONT);
 
     glm::mat4 view;
@@ -102,7 +119,7 @@ void FrameBufferObject::shadowPass(Light &light, Node& mainNode, const glm::mat4
     glClearColor(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
 
     for (size_t i = 0 ; i < CameraDirection::NUM_OF_LAYERS ; ++i) {
-        bindForWriting(cameraDirection[i].CubemapFace);
+        bindForWriting(textureId_p, cameraDirection[i].CubemapFace);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         view = glm::lookAt(lightPos3, lightPos3+cameraDirection[i].Target, cameraDirection[i].Up);
@@ -111,18 +128,18 @@ void FrameBufferObject::shadowPass(Light &light, Node& mainNode, const glm::mat4
     }
 }
 
-void FrameBufferObject::bindForWriting(GLenum CubeFace)
+void FrameBufferObject::bindForWriting(size_t textureId_p, GLenum CubeFace)
 {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, CubeFace, m_shadowMap, 0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, CubeFace, m_shadowMap[textureId_p], 0);
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
 }
 
 
-void FrameBufferObject::bindForReading(GLenum TextureUnit)
+void FrameBufferObject::bindForReading(size_t textureId_p, GLenum TextureUnit)
 {
     glActiveTexture(TextureUnit);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_shadowMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_shadowMap[textureId_p]);
 }
 
 void FrameBufferObject::debugMode(Light &light, Node& mainNode, const glm::mat4& projection, int x, int y, int width, int height, Shader& shader) {

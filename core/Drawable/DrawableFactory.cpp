@@ -205,14 +205,14 @@ unsigned int* vecToIntArray(std::vector<unsigned int>& vector) {
     return array;
 }
 
-void DrawableFactory::factorizeDataInModel(size_t size, float* vertices_p, float* normals_p, float* textures_p, DrawableModel &model) {
+void DrawableFactory::factorizeDataInModel(size_t size_p, float* vertices_p, float* normals_p, float* textures_p, DrawableModel &model) {
 
     std::vector<glm::vec3> vertices_l;
     std::vector<glm::vec3> normals_l;
     std::vector<glm::vec2> textures_l;
     std::vector<unsigned int> ibo_l;
 
-    for ( size_t i = 0 ; i < size ; ++ i ) {
+    for ( size_t i = 0 ; i < size_p ; ++ i ) {
         bool found_l = false;
         glm::vec3 vertex(vertices_p[i*3+0],vertices_p[i*3+1],vertices_p[i*3+2]);
         glm::vec3 normal(normals_p[i*3+0],normals_p[i*3+1],normals_p[i*3+2]);

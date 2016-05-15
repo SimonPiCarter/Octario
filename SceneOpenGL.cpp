@@ -6,7 +6,8 @@
 using namespace glm;
 
 SceneOpenGL::SceneOpenGL(std::string titreFenetre, int largeurFenetre, int hauteurFenetre) : m_titreFenetre(titreFenetre), m_largeurFenetre(largeurFenetre),
-                                                                                             m_hauteurFenetre(hauteurFenetre), m_fenetre(0), m_contexteOpenGL(0)
+                                                                                             m_hauteurFenetre(hauteurFenetre), m_fenetre(0), m_contexteOpenGL(0),
+                                                                                             fbo(2,1024)
 {
 
 }
@@ -35,7 +36,6 @@ bool SceneOpenGL::initialiserFenetre()
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-
 
     // Double Buffer
 
@@ -140,7 +140,7 @@ void SceneOpenGL::bouclePrincipale()
 	light.translate(4,5,2);
 	light.setProperties(1,1,1,50);
 	Light light2;
-	light2.translate(-3,-3,0);
+	light2.translate(-3,-3,2);
 	light2.setProperties(1,0.2,0.2,50);
 
 	LightManager::get().addPointLight("testLight",&light);
@@ -156,7 +156,9 @@ void SceneOpenGL::bouclePrincipale()
     projection = perspective(70.0, (double) m_largeurFenetre / m_hauteurFenetre, 0.1, 100.0);
     shadowMapProjection = perspective(90.0, 1.0, 0.1, 100.0);
 
-    fbo.init(1024);
+    fbo.init();
+    fbo.init(0);
+    fbo.init(1);
 
 	Uint32 start_time = SDL_GetTicks();
 	Uint32 elapsed_time = 0;
@@ -210,6 +212,9 @@ void SceneOpenGL::bouclePrincipale()
                     light.translate(-0.2,0,0);
                     LightManager::get().updatePointLightArray();
                     //camPos+= vec3(-0.1,0,0);
+                } else if ( m_evenements.key.keysym.sym == SDLK_KP_0 || m_evenements.key.keysym.sym == SDLK_r ) {
+                    mainNode.rotate(vec3(0, 1, 0),0.5f);
+                    //camPos+= vec3(-0.1,0,0);
                 } else if ( m_evenements.key.keysym.sym == SDLK_ESCAPE ) {
                     over = true;
                 }
@@ -219,13 +224,14 @@ void SceneOpenGL::bouclePrincipale()
         view = lookAt(camPos, camTarget, vec3(0, 1, 0));
 
         // Rotation du repere
-        mainNode.rotate(vec3(0, 1, 0),0.5f);
+        //mainNode.rotate(vec3(0, 1, 0),0.5f);
 
-        fbo.shadowPass(light,mainNode,shadowMapProjection);
+        fbo.shadowPass(0,light,mainNode,shadowMapProjection);
+        fbo.shadowPass(1,light2,mainNode,shadowMapProjection);
 
         displayPass(camPos, mainNode,view,projection);
 
-        //fbo.debugMode(light,mainNode,shadowMapProjection,0,0,256,256,shader);
+        //fbo.debugMode(light2,mainNode,shadowMapProjection,0,0,256,256,shader);
 
         // display swap buffer
         SDL_GL_SwapWindow(m_fenetre);
@@ -257,8 +263,10 @@ void SceneOpenGL::displayPass(vec3 &camPos, Node& mainNode, const mat4& view, co
     glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
     glUniform3fv(glGetUniformLocation(shader.getProgramID(), "camPos_world"), 1, value_ptr(camPos));
 
-    fbo.bindForReading(GL_TEXTURE3);
+    fbo.bindForReading(0,GL_TEXTURE3);
     glUniform1i(glGetUniformLocation(shader.getProgramID(), "shadowMap"), 3);
+    fbo.bindForReading(1,GL_TEXTURE4);
+    glUniform1i(glGetUniformLocation(shader.getProgramID(), "shadowMap2"), 4);
 
     mainNode.draw(view,glm::mat4(1), projection,shader);
 }

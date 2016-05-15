@@ -30,24 +30,27 @@ class FrameBufferObject
 {
     public:
 
-        FrameBufferObject();
+        FrameBufferObject(size_t size_p, size_t textureSize_p);
         virtual ~FrameBufferObject();
 
-        bool init(unsigned int textureSize);
+        bool init();
 
-        void bindForWriting(GLenum CubeFace);
+        bool init(size_t textureId_p);
 
-        void bindForReading(GLenum TextureUnit);
+        void bindForWriting(size_t textureId_p, GLenum CubeFace);
 
-        void shadowPass(Light &light, Node& mainNode, const glm::mat4& projection);
+        void bindForReading(size_t textureId_p, GLenum TextureUnit);
+
+        void shadowPass(size_t textureId_p, Light &light, Node& mainNode, const glm::mat4& projection);
 
         void debugMode(Light &light, Node& mainNode, const glm::mat4& projection, int x, int y, int width, int height, Shader& shader);
 
     private:
-        unsigned int m_textureSize;
+        const size_t m_nbTexture;
+        const size_t m_textureSize;
         GLuint m_fbo;
         GLuint m_depth;
-        GLuint m_shadowMap;
+        GLuint* m_shadowMap;
 
         ShadowMapShader* m_shadowMapShader;
 };
