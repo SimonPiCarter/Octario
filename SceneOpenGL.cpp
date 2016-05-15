@@ -112,6 +112,7 @@ void SceneOpenGL::bouclePrincipale()
 	taille /= 2.f;
 
 	shader.load();
+	debugShader.load();
 
 	DrawableModel model = DrawableFactory::get().createCubeSampleTextureModel(2.0f);
 	Drawable cube(&model);
@@ -128,6 +129,9 @@ void SceneOpenGL::bouclePrincipale()
 	Node subNode2;
 	subNode2.addDrawable("cube",&cube);
 	subNode2.addDrawable("plane",&plane);
+	//DebugDrawable planeDebug(&modelPlane);
+	//planeDebug.load();
+	//subNode2.addDebugDrawable("plane",&planeDebug);
 	mainNode.addSubNode("subNode2",&subNode2);
 
 	Node subNode;
@@ -230,7 +234,8 @@ void SceneOpenGL::bouclePrincipale()
         fbo.shadowPass(0,light,mainNode,shadowMapProjection);
         fbo.shadowPass(1,light2,mainNode,shadowMapProjection);
 
-        displayPass(camPos, mainNode,view,projection);
+        displayPass(camPos,mainNode,view,projection);
+        //debugPass(mainNode,view,projection);
 
         //fbo.debugMode(light2,mainNode,shadowMapProjection,0,0,256,256,shader);
 
@@ -270,4 +275,10 @@ void SceneOpenGL::displayPass(vec3 &camPos, Node& mainNode, const mat4& view, co
     glUniform1i(glGetUniformLocation(shader.getProgramID(), "shadowMap2"), 4);
 
     mainNode.draw(view,glm::mat4(1), projection,shader);
+}
+
+void SceneOpenGL::debugPass(Node& mainNode, const mat4& view, const mat4& projection) {
+    glUseProgram(debugShader.getProgramID());
+
+    mainNode.drawDebug(view,glm::mat4(1), projection,debugShader);
 }
