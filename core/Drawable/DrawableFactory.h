@@ -11,8 +11,10 @@ class DrawableFactory : public Singleton<DrawableFactory>
 
 	public:
 		DrawableModel createCubeSampleTextureModel(float size);
+		DrawableModel createCubeSampleTextureModel(float size, std::string texture_p, std::string normalTexture_p);
 
 		DrawableModel createPlaneModel(float width, float height, float thickness, float r, float g, float b);
+		DrawableModel createPlaneModel(float width, float height, float thickness, float r, float g, float b, std::string texture_p, std::string normalTexture_p);
 
 	protected:
 		DrawableFactory() {}

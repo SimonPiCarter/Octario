@@ -117,7 +117,7 @@ void SceneOpenGL::bouclePrincipale()
 	Drawable cube(&model);
 	cube.load();
 
-	DrawableModel modelPlane = DrawableFactory::get().createPlaneModel(7.f,4.f,1.f,0.5f,0.5f,0.5f);
+	DrawableModel modelPlane = DrawableFactory::get().createPlaneModel(7.f,4.f,1.f,0.5f,0.5f,0.5f,"Textures/cobblestone.jpg","Textures/cobblestoneNormal.jpg");
 	Drawable plane(&modelPlane);
 	plane.load();
 
@@ -155,7 +155,7 @@ void SceneOpenGL::bouclePrincipale()
     projection = perspective(70.0, (double) m_largeurFenetre / m_hauteurFenetre, 0.1, 100.0);
     shadowMapProjection = perspective(90.0, 1.0, 0.1, 100.0);
 
-    fbo.init(2048);
+    fbo.init(1024);
 
 	Uint32 start_time = SDL_GetTicks();
 	Uint32 elapsed_time = 0;
@@ -218,7 +218,7 @@ void SceneOpenGL::bouclePrincipale()
         view = lookAt(vec3(5,5,5)+camPos, camPos, vec3(0, 1, 0));
 
         // Rotation du repere
-        mainNode.rotate(vec3(0, 1, 0),0.05f);
+        mainNode.rotate(vec3(0, 1, 0),0.5f);
 
         fbo.shadowPass(light,mainNode,shadowMapProjection);
 

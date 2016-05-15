@@ -5,7 +5,11 @@
 using namespace glm;
 
 DrawableModel DrawableFactory::createCubeSampleTextureModel(float size) {
-	size /= 2.f;
+	return createCubeSampleTextureModel(size,"Textures/FullCaisse.jpg","Textures/FullCaisseNormal.jpg");
+}
+
+DrawableModel DrawableFactory::createCubeSampleTextureModel(float size, std::string texture_p, std::string normalTexture_p) {
+    size /= 2.f;
 	DrawableModel model;
 	// Vertices
 	float* vertices_l = new float[144]{
@@ -25,9 +29,9 @@ DrawableModel DrawableFactory::createCubeSampleTextureModel(float size) {
 
 	buildCubeDataInModel(vertices_l, model);
 
-	model.texture = new Texture("Textures/FullCaisse.jpg");
+	model.texture = new Texture(texture_p);
 	model.texture->load();
-	model.normalTexture = new Texture("Textures/FullCaisseNormal.jpg");
+	model.normalTexture = new Texture(normalTexture_p);
 	model.normalTexture->load();
 
 
@@ -37,6 +41,11 @@ DrawableModel DrawableFactory::createCubeSampleTextureModel(float size) {
 }
 
 DrawableModel DrawableFactory::createPlaneModel(float width, float height, float thickness, float r, float g, float b) {
+    return createPlaneModel(width,height,thickness,r,g,b,"Textures/gray.png","Textures/grayNormal.png");
+}
+
+DrawableModel DrawableFactory::createPlaneModel(float width, float height, float thickness, float r, float g, float b, std::string texture_p, std::string normalTexture_p) {
+
 	width /= 2;	height /= 2;	thickness /= 2;
 	DrawableModel model;
 
@@ -58,9 +67,9 @@ DrawableModel DrawableFactory::createPlaneModel(float width, float height, float
 
 	buildCubeDataInModel(vertices_l,model);
 
-	model.texture = new Texture("Textures/gray.png");
+	model.texture = new Texture(texture_p);
 	model.texture->load();
-	model.normalTexture = new Texture("Textures/grayNormal.png");
+	model.normalTexture = new Texture(normalTexture_p);
 	model.normalTexture->load();
 
 	computeTangents(model);
