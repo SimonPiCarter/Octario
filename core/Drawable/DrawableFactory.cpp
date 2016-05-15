@@ -5,7 +5,7 @@
 using namespace glm;
 
 DrawableModel DrawableFactory::createCubeSampleTextureModel(float size) {
-	return createCubeSampleTextureModel(size,"Textures/FullCaisse.jpg","Textures/FullCaisseNormal.jpg","Textures/FullCaisseBump.jpg");
+	return createCubeSampleTextureModel(size,"Textures/FullCaisse.jpg","Textures/FullCaisseNormal.jpg","");
 }
 
 DrawableModel DrawableFactory::createCubeSampleTextureModel(float size, std::string texture_p, std::string normalTexture_p, std::string bumpTexture_p) {

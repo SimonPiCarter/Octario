@@ -5,7 +5,6 @@ using namespace glm;
 
 Drawable::Drawable(DrawableModel* inModel) :
 	model(inModel),
-	shader(),
 	sizeOfVerticesBytes(inModel->sizeVertices*sizeof(float)),
 	sizeOfColorsBytes(inModel->sizeColors*sizeof(float)),
 	sizeOfIboBytes(inModel->sizeIbo*sizeof(unsigned int)),

@@ -214,7 +214,8 @@ void SceneOpenGL::bouclePrincipale()
                     //camPos+= vec3(-0.1,0,0);
                 } else if ( m_evenements.key.keysym.sym == SDLK_KP_0 || m_evenements.key.keysym.sym == SDLK_r ) {
                     mainNode.rotate(vec3(0, 1, 0),0.5f);
-                    //camPos+= vec3(-0.1,0,0);
+                } else if ( m_evenements.key.keysym.sym == SDLK_KP_1 || m_evenements.key.keysym.sym == SDLK_e ) {
+                    mainNode.rotate(vec3(0, 1, 0),-0.5f);
                 } else if ( m_evenements.key.keysym.sym == SDLK_ESCAPE ) {
                     over = true;
                 }

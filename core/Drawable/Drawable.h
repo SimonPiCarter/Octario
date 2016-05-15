@@ -30,8 +30,6 @@ class Drawable
 	protected:
 		DrawableModel* model;
 
-		Shader* shader;
-
 		int sizeOfVerticesBytes;
 		int sizeOfColorsBytes;
 		int sizeOfIboBytes;
