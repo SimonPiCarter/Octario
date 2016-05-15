@@ -222,7 +222,7 @@ void DrawableFactory::factorizeDataInModel(size_t size, float* vertices_p, float
         if ( !found_l ) {
             ibo_l.push_back(vertices_l.size());
             vertices_l.push_back(vertex);
-            normals_l.push_back(normal);
+            normals_l.push_back(glm::normalize(normal));
             textures_l.push_back(texture);
         }
     }
