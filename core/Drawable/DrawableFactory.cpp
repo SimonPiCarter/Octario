@@ -72,6 +72,10 @@ void DrawableFactory::computeTangents(DrawableModel &model) {
 
 	model.tangents = new float[model.sizeVertices];
 	model.bitangents = new float[model.sizeVertices];
+	for ( size_t i = 0 ; i < model.sizeVertices ; ++ i ) {
+        model.tangents[i] = 0;
+        model.bitangents[i] = 0;
+	}
 	model.sizeTangents = model.sizeVertices;
 	model.sizeBitangents = model.sizeVertices;
 
