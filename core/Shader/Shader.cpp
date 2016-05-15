@@ -222,18 +222,18 @@ void Shader::digestModel(DrawableModel* model) const {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, model->texture->getId());
     glUniform1i(glGetUniformLocation(getProgramID(), "colorTexture"), 0);
-    if ( model->sizeNormals > 0 ) {
+    if ( model->normalTexture != NULL ) {
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, model->normalTexture->getId());
         glUniform1i(glGetUniformLocation(getProgramID(), "normalTexture"), 1);
         glUniform1i(glGetUniformLocation(getProgramID(), "enableNormalMapping"), 1);
     } else {
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, model->bumpTexture->getId());
-        glUniform1i(glGetUniformLocation(getProgramID(), "bumpTexture"), 2);
         glUniform1i(glGetUniformLocation(getProgramID(), "enableNormalMapping"), 0);
     }
     if ( model->bumpTexture != NULL ) {
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, model->bumpTexture->getId());
+        glUniform1i(glGetUniformLocation(getProgramID(), "bumpTexture"), 2);
         glUniform1i(glGetUniformLocation(getProgramID(), "enableBumpMapping"), 1);
     } else {
         glUniform1i(glGetUniformLocation(getProgramID(), "enableBumpMapping"), 0);
