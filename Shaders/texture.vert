@@ -16,6 +16,7 @@ layout(location = 4) in vec2 in_TexCoord0;
 uniform mat4 mvp;
 uniform mat4 model;
 uniform mat4 view;
+uniform vec3 camPos_world;
 
 // Sortie
 
@@ -24,6 +25,7 @@ out vec3 pos_world;
 out vec3 normal;
 out vec3 tangent;
 out vec3 bitangent;
+out vec3 cameraPos_tangent;
 
 // Fonction main
 
@@ -39,7 +41,11 @@ void main()
 	tangent = (model * vec4(in_Tangent, 0.0)).xyz;
 	bitangent = (model * vec4(in_Bitangent, 0.0)).xyz;
 
-    // Envoi des coordonnées de texture au Fragment Shader
+	// 
+	mat3 TBNMatrix = mat3(tangent, bitangent, normal);
+	cameraPos_tangent = camPos_world - gl_Position.xyz;
+	cameraPos_tangent *= TBNMatrix; 
 
+    // Sending coord pos
     coordTexture = in_TexCoord0;
 }

@@ -56,7 +56,12 @@ vec3 computeTexColor() {
 	if ( enableBumpMapping == 0 ) {
 		return texture( colorTexture, coordTexture ).rgb;
 	} else {
-		return vec3(0,0,0);
+		float height = texture2D(bumpTexture, coordTexture).r;
+		//Our heightmap only has one color channel.
+		float v = height * 0.04 - 0.02;
+		vec3 eye = normalize(cameraPos_tangent);
+		vec2 newCoords = coordTexture + (eye.xy * v);
+		return texture( colorTexture, newCoords ).rgb;
 	}
 }
 

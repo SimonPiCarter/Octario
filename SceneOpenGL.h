@@ -30,7 +30,7 @@ class SceneOpenGL
 
 
     private:
-    void displayPass(Node& mainNode, const glm::mat4& view, const glm::mat4& projection);
+    void displayPass(glm::vec3 &camPos, Node& mainNode, const glm::mat4& view, const glm::mat4& projection);
     void shadowMapPass(Light &light, Node& mainNode, const glm::mat4& projection);
 
     std::string m_titreFenetre;

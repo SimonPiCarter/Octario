@@ -140,7 +140,7 @@ void SceneOpenGL::bouclePrincipale()
 	light.translate(4,5,2);
 	light.setProperties(1,1,1,50);
 	Light light2;
-	light2.translate(-7,-3,0);
+	light2.translate(-3,-3,0);
 	light2.setProperties(1,0.2,0.2,50);
 
 	LightManager::get().addPointLight("testLight",&light);
@@ -150,7 +150,8 @@ void SceneOpenGL::bouclePrincipale()
     mat4 projection;
     mat4 shadowMapProjection;
     mat4 view;
-    vec3 camPos = vec3(1,1,1);
+    vec3 camPos = vec3(6,6,6);
+    vec3 camTarget = vec3(1,1,1);
 
     projection = perspective(70.0, (double) m_largeurFenetre / m_hauteurFenetre, 0.1, 100.0);
     shadowMapProjection = perspective(90.0, 1.0, 0.1, 100.0);
@@ -215,14 +216,14 @@ void SceneOpenGL::bouclePrincipale()
             }
         }
 
-        view = lookAt(vec3(5,5,5)+camPos, camPos, vec3(0, 1, 0));
+        view = lookAt(camPos, camTarget, vec3(0, 1, 0));
 
         // Rotation du repere
         mainNode.rotate(vec3(0, 1, 0),0.5f);
 
         fbo.shadowPass(light,mainNode,shadowMapProjection);
 
-        displayPass(mainNode,view,projection);
+        displayPass(camPos, mainNode,view,projection);
 
         //fbo.debugMode(light,mainNode,shadowMapProjection,0,0,256,256,shader);
 
@@ -231,7 +232,7 @@ void SceneOpenGL::bouclePrincipale()
     }
 }
 
-void SceneOpenGL::displayPass(Node& mainNode, const mat4& view, const mat4& projection) {
+void SceneOpenGL::displayPass(vec3 &camPos, Node& mainNode, const mat4& view, const mat4& projection) {
     glCullFace(GL_BACK);
 
     glViewport(0,0,m_largeurFenetre,m_hauteurFenetre);
@@ -254,9 +255,10 @@ void SceneOpenGL::displayPass(Node& mainNode, const mat4& view, const mat4& proj
 
     glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "view"), 1, GL_FALSE, value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
+    glUniform3fv(glGetUniformLocation(shader.getProgramID(), "camPos_world"), 1, value_ptr(camPos));
 
-    fbo.bindForReading(GL_TEXTURE2);
-    glUniform1i(glGetUniformLocation(shader.getProgramID(), "shadowMap"), 2);
+    fbo.bindForReading(GL_TEXTURE3);
+    glUniform1i(glGetUniformLocation(shader.getProgramID(), "shadowMap"), 3);
 
     mainNode.draw(view,glm::mat4(1), projection,shader);
 }
