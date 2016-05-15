@@ -20,6 +20,22 @@ struct DrawableModel {
 
 	Texture* texture;
 	Texture* normalTexture;
+	Texture* bumpTexture;
 
-	DrawableModel() : vertices(NULL), colors(NULL), textures(NULL), normals(NULL), tangents(NULL), bitangents(NULL), texture(NULL), normalTexture(NULL) {}
+	DrawableModel() :
+	    vertices(NULL),
+	    sizeVertices(0),
+	    colors(NULL),
+	    sizeColors(0),
+	    textures(NULL),
+	    sizeTexture(0),
+	    normals(NULL),
+	    sizeNormals(0),
+	    tangents(NULL),
+	    sizeTangents(0),
+	    bitangents(NULL),
+	    sizeBitangents(0),
+	    texture(NULL),
+	    normalTexture(NULL),
+	    bumpTexture(NULL) {}
 };

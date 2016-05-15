@@ -5,10 +5,10 @@
 using namespace glm;
 
 DrawableModel DrawableFactory::createCubeSampleTextureModel(float size) {
-	return createCubeSampleTextureModel(size,"Textures/FullCaisse.jpg","Textures/FullCaisseNormal.jpg");
+	return createCubeSampleTextureModel(size,"Textures/FullCaisse.jpg","Textures/FullCaisseNormal.jpg","Textures/FullCaisseBump.jpg");
 }
 
-DrawableModel DrawableFactory::createCubeSampleTextureModel(float size, std::string texture_p, std::string normalTexture_p) {
+DrawableModel DrawableFactory::createCubeSampleTextureModel(float size, std::string texture_p, std::string normalTexture_p, std::string bumpTexture_p) {
     size /= 2.f;
 	DrawableModel model;
 	// Vertices
@@ -29,11 +29,7 @@ DrawableModel DrawableFactory::createCubeSampleTextureModel(float size, std::str
 
 	buildCubeDataInModel(vertices_l, model);
 
-	model.texture = new Texture(texture_p);
-	model.texture->load();
-	model.normalTexture = new Texture(normalTexture_p);
-	model.normalTexture->load();
-
+	loadTextures(texture_p,normalTexture_p,bumpTexture_p,model);
 
 	computeTangents(model);
 
@@ -41,10 +37,10 @@ DrawableModel DrawableFactory::createCubeSampleTextureModel(float size, std::str
 }
 
 DrawableModel DrawableFactory::createPlaneModel(float width, float height, float thickness, float r, float g, float b) {
-    return createPlaneModel(width,height,thickness,r,g,b,"Textures/gray.png","Textures/grayNormal.png");
+    return createPlaneModel(width,height,thickness,r,g,b,"Textures/gray.png","Textures/grayNormal.png","");
 }
 
-DrawableModel DrawableFactory::createPlaneModel(float width, float height, float thickness, float r, float g, float b, std::string texture_p, std::string normalTexture_p) {
+DrawableModel DrawableFactory::createPlaneModel(float width, float height, float thickness, float r, float g, float b, std::string texture_p, std::string normalTexture_p, std::string bumpTexture_p) {
 
 	width /= 2;	height /= 2;	thickness /= 2;
 	DrawableModel model;
@@ -67,10 +63,7 @@ DrawableModel DrawableFactory::createPlaneModel(float width, float height, float
 
 	buildCubeDataInModel(vertices_l,model);
 
-	model.texture = new Texture(texture_p);
-	model.texture->load();
-	model.normalTexture = new Texture(normalTexture_p);
-	model.normalTexture->load();
+	loadTextures(texture_p,normalTexture_p,bumpTexture_p,model);
 
 	computeTangents(model);
 
@@ -172,6 +165,19 @@ void DrawableFactory::buildCubeDataInModel(float* vertices_p, DrawableModel &mod
     factorizeDataInModel(48,vertices_p,normals_l,textures_l,model);
 }
 
+void DrawableFactory::loadTextures(std::string texture_p, std::string normalTexture_p, std::string bumpTexture_p, DrawableModel &model) {
+	model.texture = new Texture(texture_p);
+	model.texture->load();
+	if ( normalTexture_p.size() > 0 ) {
+        model.normalTexture = new Texture(normalTexture_p);
+        model.normalTexture->load();
+	}
+	if ( bumpTexture_p.size() > 0 ) {
+        model.bumpTexture = new Texture(bumpTexture_p);
+        model.bumpTexture->load();
+	}
+}
+
 float* vec3ToFloatArray(std::vector<glm::vec3>& vector) {
     float* array = new float[vector.size()*3];
     for ( size_t i = 0 ; i < vector.size() ; ++ i ) {
@@ -242,3 +248,5 @@ void DrawableFactory::factorizeDataInModel(size_t size, float* vertices_p, float
     model.sizeIbo = ibo_l.size();
     model.ibo = vecToIntArray(ibo_l);
 }
+
+

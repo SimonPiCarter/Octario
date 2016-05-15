@@ -117,7 +117,7 @@ void SceneOpenGL::bouclePrincipale()
 	Drawable cube(&model);
 	cube.load();
 
-	DrawableModel modelPlane = DrawableFactory::get().createPlaneModel(7.f,4.f,1.f,0.5f,0.5f,0.5f,"Textures/cobblestone.jpg","Textures/cobblestoneNormal.jpg");
+	DrawableModel modelPlane = DrawableFactory::get().createPlaneModel(7.f,4.f,1.f,0.5f,0.5f,0.5f,"Textures/cobblestone.jpg","Textures/cobblestoneNormal.jpg","Textures/cobblestoneBump.jpg");
 	Drawable plane(&modelPlane);
 	plane.load();
 

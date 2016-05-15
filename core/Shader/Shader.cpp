@@ -227,6 +227,15 @@ void Shader::digestModel(DrawableModel* model) const {
         glBindTexture(GL_TEXTURE_2D, model->normalTexture->getId());
         glUniform1i(glGetUniformLocation(getProgramID(), "normalTexture"), 1);
         glUniform1i(glGetUniformLocation(getProgramID(), "enableNormalMapping"), 1);
+    } else {
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, model->bumpTexture->getId());
+        glUniform1i(glGetUniformLocation(getProgramID(), "bumpTexture"), 2);
+        glUniform1i(glGetUniformLocation(getProgramID(), "enableNormalMapping"), 0);
     }
-    glUniform1i(glGetUniformLocation(getProgramID(), "enableBumpMapping"), 0);
+    if ( model->bumpTexture != NULL ) {
+        glUniform1i(glGetUniformLocation(getProgramID(), "enableBumpMapping"), 1);
+    } else {
+        glUniform1i(glGetUniformLocation(getProgramID(), "enableBumpMapping"), 0);
+    }
 }
