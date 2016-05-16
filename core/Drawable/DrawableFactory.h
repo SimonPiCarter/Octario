@@ -1,6 +1,8 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <string>
+#include <map>
 
 #include "../Tools/Singleton.h"
 #include "DrawableModel.h"
@@ -16,10 +18,15 @@ class DrawableFactory : public Singleton<DrawableFactory>
 		DrawableModel createPlaneModel(float width, float height, float thickness, float r, float g, float b);
 		DrawableModel createPlaneModel(float width, float height, float thickness, float r, float g, float b, std::string texture_p, std::string normalTexture_p, std::string bumpTexture_p);
 
+        DrawableModel* loadModelFromFile(std::string path, std::string file);
+        void clear();
+
 	protected:
 		DrawableFactory() {}
-		virtual ~DrawableFactory() {}
+		virtual ~DrawableFactory() { clear(); }
 	private:
+        std::map<std::string, DrawableModel*> m_models;
+
 		void computeTangents(DrawableModel &model);
 
 		void buildCubeDataInModel(float* vertices_p, DrawableModel &model);

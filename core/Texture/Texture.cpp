@@ -49,8 +49,8 @@ bool Texture::load()
         return false;
     }
 
-
-    SDL_Surface *oppositeImage = imageSDL;
+    SDL_Surface *oppositeImage = inverse(imageSDL);
+    SDL_FreeSurface(imageSDL);
     //SDL_FreeSurface(imageSDL);
 
     if(glIsTexture(id) == GL_TRUE)

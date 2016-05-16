@@ -1,4 +1,5 @@
 #include "DrawableFactory.h"
+#include "DrawableModelLoader.h"
 
 #include <vector>
 
@@ -68,6 +69,33 @@ DrawableModel DrawableFactory::createPlaneModel(float width, float height, float
 	computeTangents(model);
 
 	return model;
+}
+
+
+DrawableModel* DrawableFactory::loadModelFromFile(std::string path, std::string file) {
+    // load file
+    if ( m_models.find(file) == m_models.end() ) {
+        DrawableModelLoader modelLoader_l = DrawableModelLoader(path,file);
+
+        modelLoader_l.loadModel();
+
+        DrawableModel* model_l = new DrawableModel();
+
+        factorizeDataInModel(modelLoader_l.getNbVertices(),modelLoader_l.getVertices(),modelLoader_l.getNormals(),modelLoader_l.getTexCoords(),*model_l);
+
+        loadTextures(modelLoader_l.getColorTexture(),modelLoader_l.getNormalTexture(),modelLoader_l.getBumpTexture(),*model_l);
+
+        computeTangents(*model_l);
+
+        m_models[file] = model_l;
+    }
+    return m_models[file];
+}
+
+void DrawableFactory::clear() {
+    for (std::map<std::string, DrawableModel*>::iterator it = m_models.begin(); it != m_models.end(); ++it ) {
+        delete it->second;
+    }
 }
 
 void DrawableFactory::computeTangents(DrawableModel &model) {
