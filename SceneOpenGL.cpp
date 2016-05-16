@@ -114,38 +114,43 @@ void SceneOpenGL::bouclePrincipale()
 	shader.load();
 	debugShader.load();
 
-	DrawableModel model = DrawableFactory::get().createCubeSampleTextureModel(2.0f);
-	Drawable cube(&model);
+	//DrawableModel model = DrawableFactory::get().createCubeSampleTextureModel(2.0f);
+	DrawableModel* model = DrawableFactory::get().loadModelFromFile("Textures/demo","column.obj");
+	Drawable cube(model);
 	cube.load();
+
+	DrawableModel* modelRoom = DrawableFactory::get().loadModelFromFile("Textures/demo","room.obj");
+	Drawable room(modelRoom);
+	room.load();
 
 	DrawableModel modelPlane = DrawableFactory::get().createPlaneModel(7.f,4.f,1.f,0.5f,0.5f,0.5f,"Textures/cobblestone.jpg","Textures/cobblestoneNormal.jpg","Textures/cobblestoneBump.jpg");
 	Drawable plane(&modelPlane);
 	plane.load();
 
 	Node mainNode;
-	//mainNode.addDrawable("plane",&plane);
-	//mainNode.addDrawable("cube",&cube);
+
+	Node roomNode;
+	roomNode.addDrawable("room",&room);
+	mainNode.addSubNode("roomNode",&roomNode);
+
+	Node subNode1;
+	subNode1.addDrawable("cube",&cube);
+	subNode1.addDrawable("plane",&plane);
+	roomNode.addSubNode("subNode1",&subNode1);
+
 
 	Node subNode2;
 	subNode2.addDrawable("cube",&cube);
-	subNode2.addDrawable("plane",&plane);
-	//DebugDrawable planeDebug(&modelPlane);
-	//planeDebug.load();
-	//subNode2.addDebugDrawable("plane",&planeDebug);
-	mainNode.addSubNode("subNode2",&subNode2);
-
-	Node subNode;
-	subNode.addDrawable("cube",&cube);
-	subNode.translate(2,2,0);
-	mainNode.addSubNode("subNode",&subNode);
+	subNode2.translate(2,2,0);
+	roomNode.addSubNode("subNode2",&subNode2);
 
 	// Load light
 	Light light;
-	light.translate(4,5,2);
-	light.setProperties(1,1,1,50);
+	light.translate(3,5,0);
+	light.setProperties(1,1,1,20);
 	Light light2;
-	light2.translate(-3,-3,2);
-	light2.setProperties(1,0.2,0.2,50);
+	light2.translate(-3,5,0);
+	light2.setProperties(1,0.2,0.2,20);
 
 	LightManager::get().addPointLight("testLight",&light);
 	LightManager::get().addPointLight("testLight2",&light2);
@@ -154,8 +159,8 @@ void SceneOpenGL::bouclePrincipale()
     mat4 projection;
     mat4 shadowMapProjection;
     mat4 view;
-    vec3 camPos = vec3(6,6,6);
-    vec3 camTarget = vec3(1,1,1);
+    vec3 camPos = vec3(0,4,4);
+    vec3 camTarget = vec3(0,4,0);
 
     projection = perspective(70.0, (double) m_largeurFenetre / m_hauteurFenetre, 0.1, 100.0);
     shadowMapProjection = perspective(90.0, 1.0, 0.1, 100.0);
@@ -170,7 +175,7 @@ void SceneOpenGL::bouclePrincipale()
 
 	SDL_GL_SetSwapInterval(0);
 
-	mainNode.rotate(vec3(0, 1, 0),25.05f);
+	roomNode.rotate(vec3(0, 1, 0),165.05f);
 
     // Boucle principale
     while(!over)
@@ -201,25 +206,21 @@ void SceneOpenGL::bouclePrincipale()
             }
             if (m_evenements.type == SDL_KEYDOWN ) {
                 if ( m_evenements.key.keysym.sym == SDLK_UP || m_evenements.key.keysym.sym == SDLK_z ) {
-                    light.translate(0,0.2,0);
-                    LightManager::get().updatePointLightArray();
-                    //camPos+= vec3(0,0.1,0);
+                    camPos+= vec3(0.01,0.01,0.01)*(camTarget-camPos);
+                    camTarget+= vec3(0.01,0.01,0.01)*(camTarget-camPos);
                 } else if ( m_evenements.key.keysym.sym == SDLK_DOWN || m_evenements.key.keysym.sym == SDLK_s ) {
-                    light.translate(0,-0.2,0);
-                    LightManager::get().updatePointLightArray();
-                    //camPos+= vec3(0,-0.1,0);
+                    camPos-= vec3(0.01,0.01,0.01)*(camTarget-camPos);
+                    camTarget-= vec3(0.01,0.01,0.01)*(camTarget-camPos);
                 } else if ( m_evenements.key.keysym.sym == SDLK_RIGHT || m_evenements.key.keysym.sym == SDLK_d ) {
-                    light.translate(0.2,0,0);
-                    LightManager::get().updatePointLightArray();
-                    //camPos+= vec3(0.1,0,0);
+                    camPos+= vec3(0.0,0.5,0.0);
+                    camTarget+= vec3(0.0,0.5,0.0);
                 } else if ( m_evenements.key.keysym.sym == SDLK_LEFT || m_evenements.key.keysym.sym == SDLK_q ) {
-                    light.translate(-0.2,0,0);
-                    LightManager::get().updatePointLightArray();
-                    //camPos+= vec3(-0.1,0,0);
+                    camPos-= vec3(0.0,0.5,0.0);
+                    camTarget-= vec3(0.0,0.5,0.0);
                 } else if ( m_evenements.key.keysym.sym == SDLK_KP_0 || m_evenements.key.keysym.sym == SDLK_r ) {
-                    mainNode.rotate(vec3(0, 1, 0),0.5f);
+                    roomNode.rotate(vec3(0, 1, 0),0.5f);
                 } else if ( m_evenements.key.keysym.sym == SDLK_KP_1 || m_evenements.key.keysym.sym == SDLK_e ) {
-                    mainNode.rotate(vec3(0, 1, 0),-0.5f);
+                    roomNode.rotate(vec3(0, 1, 0),-0.5f);
                 } else if ( m_evenements.key.keysym.sym == SDLK_ESCAPE ) {
                     over = true;
                 }
@@ -227,9 +228,6 @@ void SceneOpenGL::bouclePrincipale()
         }
 
         view = lookAt(camPos, camTarget, vec3(0, 1, 0));
-
-        // Rotation du repere
-        //mainNode.rotate(vec3(0, 1, 0),0.5f);
 
         fbo.shadowPass(0,light,mainNode,shadowMapProjection);
         fbo.shadowPass(1,light2,mainNode,shadowMapProjection);
@@ -270,9 +268,14 @@ void SceneOpenGL::displayPass(vec3 &camPos, Node& mainNode, const mat4& view, co
     glUniform3fv(glGetUniformLocation(shader.getProgramID(), "camPos_world"), 1, value_ptr(camPos));
 
     fbo.bindForReading(0,GL_TEXTURE3);
-    glUniform1i(glGetUniformLocation(shader.getProgramID(), "shadowMap"), 3);
     fbo.bindForReading(1,GL_TEXTURE4);
-    glUniform1i(glGetUniformLocation(shader.getProgramID(), "shadowMap2"), 4);
+    for ( unsigned int i = 0 ; i < 14 ; ++ i ) {
+        glActiveTexture(GL_TEXTURE5+i);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 3);
+    }
+    GLint *indexes = new GLint[16]{3,4,5,6,7,3,3,3,3,3,3,3,3,3,3,3};
+    glUniform1iv(glGetUniformLocation(shader.getProgramID(), "shadowMap"), 16, indexes);
+    glUniform1i(glGetUniformLocation(shader.getProgramID(), "shadowMapCount"), 2);
 
     mainNode.draw(view,glm::mat4(1), projection,shader);
 }
