@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <string>
 
 using namespace glm;
 
@@ -135,20 +136,34 @@ void SceneOpenGL::bouclePrincipale()
 	roomNode.addDrawable("room",&room);
 	mainNode.addSubNode("roomNode",&roomNode);
 
-	Node subNode1;
+	/*Node subNode1;
 	subNode1.addDrawable("cube",&cube);
 	subNode1.addDrawable("plane",&plane);
 	roomNode.addSubNode("subNode1",&subNode1);
 
+*/
+    for ( int i = 0 ; i < 15 ; ++ i ) {
+        std::stringstream convert; // stringstream used for the conversion
+        convert << i;//add the value of Number to the characters in the stream
+        std::string sti = convert.str();//set Result to the content of the stream
 
-	Node subNode2;
-	subNode2.addDrawable("cube",&cube);
-	subNode2.translate(2,2,0);
-	roomNode.addSubNode("subNode2",&subNode2);
+        Node* subNode = new Node();
+        subNode->addDrawable("cube",&cube);
+        subNode->translate(-3.5,2.9,3.5-i*1.2);
+        roomNode.addSubNode("subNode1"+sti,subNode);
+
+        Node* subNode2 = new Node();
+        subNode2->addDrawable("cube",&cube);
+        subNode2->translate(3.0,2.9,3.5-i*1.2);
+        roomNode.addSubNode("subNode2"+sti,subNode2);
+    }
+
+	// Load columns
+
 
 	// Load light
 	Light light;
-	light.translate(3,5,0);
+	light.translate(3.5,5,0);
 	light.setProperties(1,1,1,20);
 	Light light2;
 	light2.translate(-3,5,0);
