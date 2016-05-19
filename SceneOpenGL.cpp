@@ -42,6 +42,8 @@ bool SceneOpenGL::initialiserFenetre()
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+
 
     // Création de la fenêtre
     m_fenetre = SDL_CreateWindow(m_titreFenetre.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_largeurFenetre, m_hauteurFenetre, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
@@ -159,8 +161,8 @@ void SceneOpenGL::bouclePrincipale()
     mat4 projection;
     mat4 shadowMapProjection;
     mat4 view;
-    vec3 camPos = vec3(0,4,4);
-    vec3 camTarget = vec3(0,4,0);
+    Camera camera;
+    camera.translate(0,4,4);
 
     projection = perspective(70.0, (double) m_largeurFenetre / m_hauteurFenetre, 0.1, 100.0);
     shadowMapProjection = perspective(90.0, 1.0, 0.1, 100.0);
@@ -175,7 +177,7 @@ void SceneOpenGL::bouclePrincipale()
 
 	SDL_GL_SetSwapInterval(0);
 
-	roomNode.rotate(vec3(0, 1, 0),165.05f);
+	camera.yaw(180.f);
 
     // Boucle principale
     while(!over)
@@ -201,22 +203,19 @@ void SceneOpenGL::bouclePrincipale()
             if (m_evenements.type == SDL_QUIT){
                 over = true;
             }
-            if(m_evenements.window.event == SDL_WINDOWEVENT_CLOSE) {
+            else if(m_evenements.window.event == SDL_WINDOWEVENT_CLOSE) {
                 over = true;
             }
-            if (m_evenements.type == SDL_KEYDOWN ) {
+            else if (m_evenements.type == SDL_KEYDOWN ) {
+                float speed = 0.1f;
                 if ( m_evenements.key.keysym.sym == SDLK_UP || m_evenements.key.keysym.sym == SDLK_z ) {
-                    camPos+= vec3(0.01,0.01,0.01)*(camTarget-camPos);
-                    camTarget+= vec3(0.01,0.01,0.01)*(camTarget-camPos);
+                    camera.translate(0,0,speed);
                 } else if ( m_evenements.key.keysym.sym == SDLK_DOWN || m_evenements.key.keysym.sym == SDLK_s ) {
-                    camPos-= vec3(0.01,0.01,0.01)*(camTarget-camPos);
-                    camTarget-= vec3(0.01,0.01,0.01)*(camTarget-camPos);
+                    camera.translate(0,0,-speed);
                 } else if ( m_evenements.key.keysym.sym == SDLK_RIGHT || m_evenements.key.keysym.sym == SDLK_d ) {
-                    camPos+= vec3(0.0,0.5,0.0);
-                    camTarget+= vec3(0.0,0.5,0.0);
+                    camera.translate(speed,0,0);
                 } else if ( m_evenements.key.keysym.sym == SDLK_LEFT || m_evenements.key.keysym.sym == SDLK_q ) {
-                    camPos-= vec3(0.0,0.5,0.0);
-                    camTarget-= vec3(0.0,0.5,0.0);
+                    camera.translate(-speed,0,0);
                 } else if ( m_evenements.key.keysym.sym == SDLK_KP_0 || m_evenements.key.keysym.sym == SDLK_r ) {
                     roomNode.rotate(vec3(0, 1, 0),0.5f);
                 } else if ( m_evenements.key.keysym.sym == SDLK_KP_1 || m_evenements.key.keysym.sym == SDLK_e ) {
@@ -225,14 +224,23 @@ void SceneOpenGL::bouclePrincipale()
                     over = true;
                 }
             }
+            else if ( m_evenements.type == SDL_MOUSEBUTTONDOWN ) {
+
+            }
+            else if ( m_evenements.type == SDL_MOUSEMOTION ) {
+                float angleYaw = -(float)m_evenements.motion.xrel/(float)m_largeurFenetre*70.f;
+                float anglePitch = -(float)m_evenements.motion.yrel/(float)m_hauteurFenetre*70.f;
+                camera.pitch(anglePitch);
+                camera.yaw(angleYaw);
+            }
         }
 
-        view = lookAt(camPos, camTarget, vec3(0, 1, 0));
+        view = camera.getView();
 
         fbo.shadowPass(0,light,mainNode,shadowMapProjection);
         fbo.shadowPass(1,light2,mainNode,shadowMapProjection);
 
-        displayPass(camPos,mainNode,view,projection);
+        displayPass(camera.getPosition(),mainNode,view,projection);
         //debugPass(mainNode,view,projection);
 
         //fbo.debugMode(light2,mainNode,shadowMapProjection,0,0,256,256,shader);
@@ -242,7 +250,7 @@ void SceneOpenGL::bouclePrincipale()
     }
 }
 
-void SceneOpenGL::displayPass(vec3 &camPos, Node& mainNode, const mat4& view, const mat4& projection) {
+void SceneOpenGL::displayPass(vec3 camPos, Node& mainNode, const mat4& view, const mat4& projection) {
     glCullFace(GL_BACK);
 
     glViewport(0,0,m_largeurFenetre,m_hauteurFenetre);

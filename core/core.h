@@ -10,3 +10,4 @@
 #include "Node/Node.h"
 #include "Light/LightManager.h"
 #include "FBO/FrameBufferObject.h"
+#include "Camera/Camera.h"
